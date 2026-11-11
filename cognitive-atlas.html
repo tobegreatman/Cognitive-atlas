@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>认知经纬 · 五域认知体系</title>
+<meta name="description" content="经济学、逻辑学、哲学、心理学、社会学：五域要义、六条暗线与一套可练习的提问方式。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23c9a46a' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%23c9a46a'/%3E%3C/svg%3E">
+<style>
+/* ============ 0. TOKENS & RESET ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06080c; --bg-2:#090c12;
+  --panel:rgba(255,255,255,.022);
+  --panel-hover:rgba(255,255,255,.04);
+  --ink:#ece6d8; --ink-2:#c6c0b3; --muted:#8d8b90; --faint:#5d5c62;
+  --line:rgba(236,230,216,.09); --line-strong:rgba(236,230,216,.17);
+  --gold:#c9a46a; --gold-bright:#e7c994;
+  --sans:"PingFang SC","HarmonyOS Sans SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Songti SC","Noto Serif SC","Source Han Serif SC","STSong",Georgia,"Times New Roman",serif;
+  --mono:"SF Mono","JetBrains Mono",Consolas,"Courier New",monospace;
+  --maxw:1180px; --nav-h:72px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;
+  font-kerning:normal;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(1200px 800px at 10% -12%,rgba(201,164,106,.10),transparent 62%),
+    radial-gradient(1000px 700px at 102% 18%,rgba(111,184,206,.055),transparent 62%),
+    radial-gradient(900px 900px at 50% 112%,rgba(156,140,216,.05),transparent 62%),
+    var(--bg);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:.03;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+::selection{background:rgba(201,164,106,.28);color:#fff}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+ul,ol{list-style:none}
+img,svg,canvas{display:block;max-width:100%}
+kbd{font-family:var(--mono)}
+[v-cloak]{display:none}
+:focus-visible{outline:1px solid var(--gold);outline-offset:4px;border-radius:4px}
+.container{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 32px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.boot-error{min-height:100vh;display:grid;place-items:center;color:var(--ink-2);font-size:15px;padding:32px;text-align:center}
+
+/* ============ 1. NAV ============ */
+.progress{position:fixed;top:0;left:0;height:2px;z-index:210;background:linear-gradient(90deg,#8f6c36,var(--gold-bright));box-shadow:0 0 18px rgba(201,164,106,.55);transition:width .12s linear}
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--nav-h);border-bottom:1px solid transparent;transition:background .35s,border-color .35s,backdrop-filter .35s}
+.nav.solid{background:rgba(6,8,12,.78);-webkit-backdrop-filter:blur(18px) saturate(130%);backdrop-filter:blur(18px) saturate(130%);border-bottom-color:var(--line)}
+.nav-inner{height:100%;max-width:1320px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px}
+.brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--serif);font-size:18px;letter-spacing:.14em;color:var(--ink);white-space:nowrap}
+.brand em{font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:.22em;color:var(--faint);margin-left:2px}
+.brand-mark{width:18px;height:18px;border:1px solid rgba(201,164,106,.65);border-radius:50%;display:grid;place-items:center;position:relative}
+.brand-mark::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--gold-bright);box-shadow:0 0 8px rgba(231,201,148,.9)}
+.brand-mark::after{content:"";position:absolute;inset:-4px;border:1px solid rgba(201,164,106,.14);border-radius:50%}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{position:relative;padding:8px 11px;font-size:13px;letter-spacing:.04em;color:var(--muted);transition:color .25s;white-space:nowrap}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a.act{color:var(--gold-bright)}
+.nav-links a.act::after{content:"";position:absolute;left:50%;bottom:1px;width:3px;height:3px;border-radius:50%;background:var(--gold);transform:translateX(-50%)}
+.nav-sep{width:1px;height:14px;background:var(--line-strong);margin:0 6px}
+.nav-tools{display:flex;justify-content:flex-end;align-items:center;gap:10px}
+.search-btn{display:inline-flex;align-items:center;gap:9px;height:34px;padding:0 10px 0 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:12px;transition:border-color .25s,color .25s,background .25s}
+.search-btn:hover{color:var(--ink);border-color:var(--line-strong);background:rgba(255,255,255,.03)}
+.search-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.6}
+.search-btn kbd{font-size:9px;letter-spacing:.04em;border:1px solid var(--line);border-radius:4px;padding:1px 4px;color:var(--faint);margin-left:2px}
+.menu-btn{display:none;position:relative;width:34px;height:34px;border:1px solid var(--line);border-radius:50%;place-items:center;color:var(--ink-2);transition:border-color .25s,color .25s}
+.menu-btn:hover{color:var(--ink);border-color:var(--line-strong)}
+.menu-btn i{position:relative;display:block;width:13px;height:1px;background:currentColor;transition:background .25s}
+.menu-btn i::before,.menu-btn i::after{content:"";position:absolute;left:0;width:13px;height:1px;background:currentColor;transition:transform .3s var(--ease)}
+.menu-btn i::before{top:-4px}
+.menu-btn i::after{top:4px}
+.menu-btn[aria-expanded="true"] i{background:transparent}
+.menu-btn[aria-expanded="true"] i::before{transform:translateY(4px) rotate(45deg)}
+.menu-btn[aria-expanded="true"] i::after{transform:translateY(-4px) rotate(-45deg)}
+.mobile-menu{display:none}
+
+/* ============ 2. HERO ============ */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:calc(var(--nav-h) + 46px) 0 46px;overflow:hidden}
+.hero-inner{width:100%;max-width:1320px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:minmax(360px,.9fr) minmax(0,1.1fr);gap:20px;align-items:center}
+.hero-copy{position:relative;z-index:2;max-width:560px}
+.eyebrow{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase}
+.eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px rgba(201,164,106,.9);animation:pulseDot 3.2s ease-in-out infinite}
+.hero-title{font-family:var(--serif);font-weight:500;font-size:clamp(66px,7.6vw,112px);line-height:1.04;letter-spacing:.07em;margin:26px 0 18px;color:var(--ink)}
+.hero-title span{background:linear-gradient(135deg,#f0d7a8 8%,#c9a46a 52%,#97703a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 26px rgba(201,164,106,.14))}
+.hero-sub{font-family:var(--serif);font-size:clamp(18px,1.75vw,23px);letter-spacing:.06em;color:var(--ink-2);line-height:1.6}
+.hero-lead{max-width:34em;margin-top:20px;font-size:14.5px;line-height:2;color:var(--muted)}
+.hero-lead strong{color:var(--ink-2);font-weight:500}
+.hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:34px}
+.btn{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 22px;border-radius:999px;font-size:13.5px;letter-spacing:.06em;transition:transform .25s,box-shadow .25s,border-color .25s,background .25s}
+.btn-solid{background:linear-gradient(180deg,#e8cb97,#c9a46a);color:#15110a;font-weight:600;box-shadow:0 12px 34px -14px rgba(201,164,106,.65)}
+.btn-solid:hover{transform:translateY(-1px);box-shadow:0 16px 40px -12px rgba(201,164,106,.8)}
+.btn-solid em{font-family:var(--serif);font-style:normal;font-size:16px;transition:transform .3s}
+.btn-solid:hover em{transform:translateY(2px)}
+.btn-ghost{border:1px solid var(--line-strong);color:var(--ink-2);background:rgba(255,255,255,.015)}
+.btn-ghost:hover{border-color:rgba(201,164,106,.45);color:var(--ink);background:rgba(201,164,106,.05)}
+.hero-meta{display:flex;align-items:flex-start;gap:40px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line)}
+.hero-meta div{display:flex;flex-direction:column;gap:2px}
+.hero-meta strong{font-family:var(--serif);font-weight:400;font-size:26px;color:var(--gold-bright);line-height:1.2;font-variant-numeric:tabular-nums}
+.hero-meta span{font-size:10px;letter-spacing:.16em;color:var(--faint)}
+.hero-visual{position:relative;height:min(70vh,700px);min-height:500px;z-index:1}
+.hero-visual::before{content:"";position:absolute;inset:-8% -6%;background:radial-gradient(closest-side,rgba(201,164,106,.07),transparent 70%),radial-gradient(closest-side at 68% 62%,rgba(111,184,206,.06),transparent 72%);pointer-events:none}
+#atlas-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;cursor:grab;outline:none}
+#atlas-canvas:focus-visible{outline:1px solid rgba(201,164,106,.4);outline-offset:-4px;border-radius:12px}
+.atlas-tip{position:absolute;z-index:4;pointer-events:none;padding:10px 13px;border:1px solid var(--line-strong);border-radius:10px;background:rgba(8,10,14,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 18px 40px -18px rgba(0,0,0,.9);opacity:0;transform:translate(-50%,-125%) translateY(4px);transition:opacity .18s,transform .18s;max-width:240px;text-align:center}
+.atlas-tip.show{opacity:1;transform:translate(-50%,-125%)}
+.atlas-tip .tip-domain{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;margin-bottom:4px}
+.atlas-tip strong{display:block;font-size:14px;font-weight:600;letter-spacing:.03em;color:var(--ink)}
+.atlas-tip em{display:block;font-style:normal;margin-top:3px;font-size:10px;color:var(--faint)}
+.atlas-hint{position:absolute;right:6px;bottom:0;z-index:3;display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.atlas-hint::before{content:"";width:14px;height:14px;border:1px solid rgba(201,164,106,.35);border-radius:50%;border-top-color:transparent;animation:spin 6s linear infinite}
+.atlas-legend{position:absolute;left:0;bottom:-6px;z-index:3;display:flex;flex-wrap:wrap;gap:4px;padding:5px;border:1px solid var(--line);border-radius:999px;background:rgba(6,8,12,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.atlas-legend button{display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border-radius:999px;font-size:11px;color:var(--ink-2);transition:background .25s,color .25s}
+.atlas-legend button:hover{background:rgba(255,255,255,.055);color:#fff}
+.atlas-legend .legend-dot{width:5px;height:5px;border-radius:50%;box-shadow:0 0 8px currentColor}
+.atlas-legend em{font-style:normal;font-size:9px;color:var(--faint);margin-left:-2px}
+.hero-scroll{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-family:var(--mono);font-size:8px;letter-spacing:.34em;color:var(--faint);display:flex;flex-direction:column;align-items:center;gap:8px}
+.hero-scroll::after{content:"";width:1px;height:30px;background:linear-gradient(var(--gold),transparent);animation:scrollLine 2.4s ease-in-out infinite}
+@keyframes pulseDot{0%,100%{opacity:.5;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes scrollLine{0%{transform:scaleY(.2);transform-origin:top;opacity:0}35%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);transform-origin:bottom;opacity:0}}
+
+/* ============ 3. MANIFESTO ============ */
+.manifesto{position:relative;border-top:1px solid var(--line);padding:96px 0 0}
+.manifesto .container{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(36px,6vw,90px);align-items:end;padding-bottom:72px}
+.manifesto-quote{font-family:var(--serif);font-size:clamp(30px,4.4vw,54px);font-weight:400;line-height:1.38;letter-spacing:.03em;color:var(--ink)}
+.manifesto-quote em{font-style:normal;color:var(--gold-bright)}
+.manifesto-body{font-size:14.5px;line-height:2.1;color:var(--muted);padding-bottom:4px}
+.manifesto-body strong{color:var(--ink-2);font-weight:500}
+.manifesto-body span{display:block;margin-top:18px;padding-top:18px;border-top:1px solid var(--line);font-family:var(--serif);font-size:16px;color:var(--ink-2);letter-spacing:.04em}
+.marquee{position:relative;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:17px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.marquee-track{display:flex;width:max-content;animation:marquee 52s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-set{display:flex;align-items:center;flex-shrink:0}
+.marquee-set span{font-family:var(--serif);font-size:13px;letter-spacing:.14em;color:var(--faint);white-space:nowrap;margin:0 24px}
+.marquee-set i{font-style:normal;color:rgba(201,164,106,.5);font-size:8px}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ============ 4. SECTION BASICS ============ */
+.section{position:relative;padding:110px 0;border-top:1px solid var(--line);scroll-margin-top:var(--nav-h)}
+.section-head{max-width:760px}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--gold);text-transform:uppercase}
+.section-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,3.8vw,46px);line-height:1.3;letter-spacing:.04em;margin:18px 0 16px}
+.section-head .lead{font-size:14.5px;line-height:2;color:var(--muted);max-width:41em}
+.section-head .lead strong{color:var(--ink-2);font-weight:500}
+[data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0ms)}
+[data-reveal].is-in{opacity:1;transform:none}
+
+/* ============ 5. MAP ============ */
+.map-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:52px}
+.map-card{position:relative;display:flex;flex-direction:column;min-height:230px;padding:22px 20px 20px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(165deg,rgba(255,255,255,.032),rgba(255,255,255,.008));text-align:left;overflow:hidden;transition:transform .4s var(--ease),border-color .35s,background .35s,box-shadow .4s}
+.map-card::before{content:"";position:absolute;left:20px;right:20px;top:0;height:1px;background:linear-gradient(90deg,var(--accent),transparent);opacity:.55;transform:scaleX(.28);transform-origin:left;transition:transform .5s var(--ease)}
+.map-card::after{content:"";position:absolute;right:-40px;bottom:-60px;width:170px;height:170px;border-radius:50%;background:var(--accent);filter:blur(60px);opacity:.07;transition:opacity .4s}
+.map-card:hover{transform:translateY(-4px);border-color:var(--line-strong);box-shadow:0 30px 60px -38px rgba(0,0,0,.95)}
+.map-card:hover::before{transform:scaleX(1)}
+.map-card:hover::after{opacity:.14}
+.map-index{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--accent);opacity:.9}
+.map-en{margin-top:3px;font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.map-card h3{font-family:var(--serif);font-size:27px;font-weight:400;letter-spacing:.06em;margin:26px 0 0;display:flex;align-items:baseline;gap:8px;color:var(--ink)}
+.map-card h3 em{font-style:normal;font-family:var(--sans);font-size:10px;letter-spacing:.12em;color:var(--accent);padding:2px 6px;border:1px solid currentColor;border-radius:999px;opacity:.75;transform:translateY(-3px)}
+.map-card p{margin-top:12px;font-size:12.5px;line-height:1.85;color:var(--muted)}
+.map-arrow{position:absolute;right:18px;bottom:16px;font-family:var(--serif);font-size:18px;color:var(--accent);opacity:0;transform:translateX(-6px);transition:opacity .3s,transform .3s}
+.map-card:hover .map-arrow{opacity:1;transform:none}
+
+/* ============ 6. DOMAIN ============ */
+.domain{position:relative;padding:104px 0 82px;border-top:1px solid var(--line);overflow:hidden;scroll-margin-top:var(--nav-h)}
+.domain::before{content:"";position:absolute;left:-180px;top:-140px;width:820px;height:560px;background:radial-gradient(closest-side,var(--accent),transparent 70%);opacity:.055;filter:blur(28px);pointer-events:none}
+.domain .container{position:relative}
+.domain-head{position:relative;margin-bottom:40px}
+.domain-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--accent);text-transform:uppercase}
+.domain-head h2{display:flex;align-items:baseline;gap:14px;font-family:var(--serif);font-weight:400;font-size:clamp(38px,4.6vw,54px);letter-spacing:.08em;line-height:1.2;margin-top:14px}
+.domain-verb{font-family:var(--sans);font-size:11px;letter-spacing:.24em;color:var(--accent);border:1px solid rgba(236,230,216,.16);border-radius:999px;padding:4px 11px;transform:translateY(-8px);font-weight:400}
+.domain-q{max-width:36em;margin-top:20px;font-family:var(--serif);font-size:clamp(17px,1.75vw,21px);line-height:1.8;color:var(--ink-2);letter-spacing:.03em}
+.domain-thesis{max-width:46em;margin-top:12px;font-size:13.5px;line-height:1.9;color:var(--muted)}
+.domain-facts{display:flex;align-items:center;flex-wrap:wrap;gap:18px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:10px;letter-spacing:.14em;color:var(--faint)}
+.domain-facts .sep{width:3px;height:3px;border-radius:50%;background:var(--faint);opacity:.7}
+.domain-toggle{margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:10px;letter-spacing:.1em;color:var(--muted);transition:color .25s,border-color .25s}
+.domain-toggle:hover{color:var(--ink);border-color:var(--line-strong)}
+.domain-mark{position:absolute;right:-10px;top:-78px;font-family:var(--serif);font-size:clamp(140px,19vw,250px);line-height:1;color:var(--accent);opacity:.055;pointer-events:none;user-select:none;z-index:-1}
+.layer{margin-top:46px}
+.layer:first-of-type{margin-top:36px}
+.layer-head{display:grid;grid-template-columns:40px 1fr auto;gap:18px;align-items:start;padding-bottom:18px;border-bottom:1px solid var(--line-strong)}
+.layer-roman{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(236,230,216,.16);border-radius:9px;font-family:var(--serif);font-size:14px;color:var(--accent);background:rgba(255,255,255,.018)}
+.layer-titles h3{font-family:var(--serif);font-size:21px;font-weight:400;letter-spacing:.05em;display:flex;align-items:center;gap:12px;line-height:1.5}
+.layer-titles h3 i{width:18px;height:1px;background:var(--line-strong);display:inline-block}
+.layer-titles p{margin-top:3px;font-size:11.5px;letter-spacing:.04em;color:var(--faint)}
+.layer-toggle{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:10px;letter-spacing:.1em;color:var(--muted);transition:color .25s,border-color .25s,background .25s;white-space:nowrap}
+.layer-toggle:hover{color:var(--ink);border-color:var(--line-strong);background:rgba(255,255,255,.03)}
+.layer-toggle .pm{font-family:var(--mono);font-size:12px;color:var(--accent);transition:transform .35s var(--ease)}
+.layer-toggle.on .pm{transform:rotate(45deg)}
+.item-list{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.item{position:relative;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.014);scroll-margin-top:112px;transition:border-color .3s,background .3s,box-shadow .35s}
+.item:hover{border-color:var(--line-strong);background:rgba(255,255,255,.028)}
+.item.open{background:rgba(255,255,255,.026);border-color:rgba(236,230,216,.14);box-shadow:inset 2px 0 0 var(--accent)}
+.item.flash{animation:flashItem 1.9s var(--ease)}
+@keyframes flashItem{0%,100%{box-shadow:inset 2px 0 0 var(--accent)}25%,60%{box-shadow:inset 2px 0 0 var(--accent),0 0 0 1px var(--accent),0 0 40px -8px var(--accent)}}
+.item-head{display:grid;grid-template-columns:54px 1fr 22px;gap:14px;width:100%;padding:18px 20px;text-align:left;align-items:start;border-radius:12px}
+.item-num{padding-top:4px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--accent);opacity:.78;font-variant-numeric:tabular-nums}
+.item-main{display:block;min-width:0}
+.item-term{display:block;font-size:16.5px;font-weight:600;letter-spacing:.02em;color:var(--ink);line-height:1.55}
+.item-term em{margin-left:9px;font-style:normal;font-family:var(--mono);font-size:9px;letter-spacing:.13em;color:var(--faint);font-weight:400;text-transform:uppercase;white-space:nowrap}
+.item-claim{display:block;margin-top:4px;font-size:14px;line-height:1.85;color:var(--ink-2);letter-spacing:.01em}
+.item.open .item-claim{color:var(--ink)}
+.item-plus{position:relative;width:14px;height:14px;margin-top:5px;opacity:.55;transition:opacity .25s}
+.item-plus::before,.item-plus::after{content:"";position:absolute;left:50%;top:50%;background:var(--ink-2);border-radius:1px;transition:transform .35s var(--ease),opacity .3s}
+.item-plus::before{width:14px;height:1px;transform:translate(-50%,-50%)}
+.item-plus::after{width:1px;height:14px;transform:translate(-50%,-50%)}
+.item.open .item-plus{opacity:.9}
+.item.open .item-plus::after{transform:translate(-50%,-50%) scaleY(0)}
+.item-body{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .5s var(--ease),opacity .35s}
+.item.open .item-body{grid-template-rows:1fr;opacity:1}
+.item-body-inner{overflow:hidden;min-height:0;padding:0 22px 0 88px}
+.item.open .item-body-inner{padding-bottom:22px}
+.item-text{font-size:15px;line-height:2;color:var(--ink-2);max-width:40em;padding-top:4px}
+.item-note{display:grid;grid-template-columns:40px 1fr;gap:12px;margin-top:14px;padding:10px 0 10px 14px;border-left:2px solid var(--accent);background:linear-gradient(90deg,rgba(255,255,255,.025),transparent 70%);border-radius:0 6px 6px 0}
+.item-note span{padding-top:2px;font-size:9px;letter-spacing:.18em;color:var(--accent)}
+.item-note p{font-size:12.5px;line-height:1.9;color:var(--muted)}
+.item-note.example{border-left-color:rgba(236,230,216,.2)}
+.item-note.example span{color:var(--faint)}
+.item-links{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.item-links button{display:inline-flex;align-items:center;gap:7px;padding:4px 11px;border:1px solid rgba(201,164,106,.28);border-radius:999px;font-size:10px;letter-spacing:.08em;color:var(--gold);transition:background .25s,border-color .25s}
+.item-links button:hover{background:rgba(201,164,106,.1);border-color:rgba(201,164,106,.55)}
+.item-links button::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px rgba(201,164,106,.9)}
+
+/* ============ 7. DOMAIN FOOT ============ */
+.domain-foot{display:grid;grid-template-columns:1.12fr .88fr;gap:14px;margin-top:54px}
+.foot-card{padding:22px 24px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.foot-card h4{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--faint);font-weight:400;text-transform:uppercase;margin-bottom:14px}
+.interface{display:grid;grid-template-columns:8px 1fr 16px;gap:13px;align-items:start;width:100%;padding:12px 0;border-top:1px dashed var(--line);text-align:left;color:var(--ink-2);transition:color .25s}
+.interface:first-of-type{border-top:0;padding-top:2px}
+.interface:hover{color:var(--ink)}
+.interface .dot{width:5px;height:5px;border-radius:50%;margin-top:8px;box-shadow:0 0 8px currentColor}
+.interface strong{display:block;font-size:13px;font-weight:500;letter-spacing:.05em}
+.interface span.note{display:block;margin-top:2px;font-size:11.5px;line-height:1.7;color:var(--muted)}
+.interface .arrow{font-family:var(--serif);font-size:14px;color:var(--faint);margin-top:2px;transition:transform .25s,color .25s}
+.interface:hover .arrow{transform:translateX(3px);color:var(--gold)}
+.errors li{position:relative;padding:10px 0 10px 24px;border-top:1px dashed var(--line);font-size:12.5px;line-height:1.8;color:var(--muted);counter-increment:err}
+.errors li:first-child{border-top:0;padding-top:2px}
+.errors li::before{content:counter(err,decimal-leading-zero);position:absolute;left:0;top:10px;font-family:var(--mono);font-size:9px;letter-spacing:.05em;color:var(--accent);opacity:.75}
+.errors li:first-child::before{top:2px}
+.errors{counter-reset:err}
+
+/* ============ 8. BRIDGES ============ */
+.bridges{background:linear-gradient(180deg,rgba(255,255,255,.018),transparent 55%);}
+.bridge-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:52px}
+.bridge{position:relative;padding:28px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(160deg,rgba(255,255,255,.03),rgba(255,255,255,.008));overflow:hidden;transition:transform .4s var(--ease),border-color .35s,box-shadow .4s}
+.bridge::after{content:"";position:absolute;right:-70px;bottom:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,var(--c1),transparent 66%);opacity:.1;filter:blur(28px);pointer-events:none;transition:opacity .4s}
+.bridge:hover{transform:translateY(-3px);border-color:var(--line-strong);box-shadow:0 30px 60px -40px rgba(0,0,0,.95)}
+.bridge:hover::after{opacity:.2}
+.bridge-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.bridge-roman{font-family:var(--serif);font-size:20px;color:var(--gold);opacity:.8}
+.bridge-dots{display:flex;align-items:center;gap:7px}
+.bridge-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.12)}
+.bridge-dots i.on{box-shadow:0 0 9px currentColor}
+.bridge h3{font-family:var(--serif);font-size:27px;font-weight:400;letter-spacing:.08em;margin-top:20px;display:flex;align-items:baseline;gap:10px}
+.bridge h3 em{font-style:normal;font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase}
+.bridge-def{font-size:14.5px;line-height:1.9;color:var(--ink-2);margin-top:12px;max-width:34em}
+.bridge-insight{font-size:12.5px;line-height:1.95;color:var(--muted);margin-top:10px;padding-left:13px;border-left:1px solid var(--line-strong)}
+.bridge-conn{display:flex;flex-wrap:wrap;gap:6px;margin-top:20px;padding-top:16px;border-top:1px dashed var(--line)}
+.bridge-conn span{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.06em;color:var(--muted);padding:3px 9px;border:1px solid var(--line);border-radius:999px}
+.bridge-conn span::before{content:"";width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.8}
+
+/* ============ 9. OVERVIEW ============ */
+.table-wrap{margin-top:48px;border:1px solid var(--line);border-radius:16px;overflow:auto;background:var(--panel);-webkit-overflow-scrolling:touch}
+.matrix{width:100%;min-width:900px;border-collapse:collapse}
+.matrix th{font-family:var(--mono);font-size:9px;letter-spacing:.18em;font-weight:400;color:var(--faint);text-align:left;padding:16px 18px;border-bottom:1px solid var(--line-strong);white-space:nowrap;background:rgba(255,255,255,.012)}
+.matrix td{padding:20px 18px;border-bottom:1px solid var(--line);vertical-align:top;font-size:12.5px;line-height:1.85;color:var(--muted)}
+.matrix tr:last-child td{border-bottom:0}
+.matrix tr:hover td{background:rgba(255,255,255,.018)}
+.matrix td:first-child{font-family:var(--serif);font-size:17px;color:var(--ink);white-space:nowrap}
+.matrix td:first-child span{display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:9px;transform:translateY(-2px);box-shadow:0 0 8px currentColor}
+.matrix .stance{font-family:var(--serif);font-size:15px;color:var(--ink-2);letter-spacing:.08em}
+.matrix .q{color:var(--ink-2);max-width:17em}
+.matrix .pit{color:rgba(236,230,216,.55)}
+
+/* ============ 10. METHOD ============ */
+.method-grid{display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(40px,7vw,96px);align-items:start;margin-top:16px}
+.method-intro{position:sticky;top:118px}
+.method-intro h2{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.6vw,44px);line-height:1.35;letter-spacing:.04em;margin:18px 0 18px}
+.method-intro h2 em{font-style:normal;color:var(--gold-bright)}
+.method-intro p{font-size:13.5px;line-height:2;color:var(--muted);max-width:24em}
+.method-principles{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.method-principles span{font-family:var(--serif);font-size:14px;color:var(--ink-2);letter-spacing:.05em;display:flex;gap:10px;align-items:baseline}
+.method-principles i{font-family:var(--mono);font-style:normal;font-size:8px;color:var(--gold);letter-spacing:.1em}
+.steps{border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:58px 1fr;gap:18px;padding:26px 0;border-bottom:1px solid var(--line);position:relative}
+.step-num{font-family:var(--serif);font-size:16px;color:var(--accent);padding-top:4px;letter-spacing:.06em}
+.step h3{font-family:var(--serif);font-size:clamp(20px,2.1vw,25px);font-weight:400;line-height:1.55;letter-spacing:.03em;color:var(--ink)}
+.step p{font-size:12.5px;line-height:1.95;color:var(--muted);margin-top:7px;max-width:33em}
+.step-tag{display:inline-flex;align-items:center;gap:6px;margin-top:11px;font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase}
+.step-tag::before{content:"";width:12px;height:1px;background:currentColor;opacity:.6}
+.readings{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:64px}
+.reading{padding:22px;border:1px solid var(--line);border-radius:14px;background:var(--panel);transition:border-color .3s,background .3s}
+.reading:hover{border-color:var(--line-strong);background:rgba(255,255,255,.03)}
+.reading .time{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--gold)}
+.reading h4{font-family:var(--serif);font-size:20px;font-weight:400;letter-spacing:.06em;margin:12px 0 8px}
+.reading p{font-size:12px;line-height:1.9;color:var(--muted)}
+
+/* ============ 11. CLOSING & FOOTER ============ */
+.closing{position:relative;padding:120px 0 110px;border-top:1px solid var(--line);text-align:center;overflow:hidden}
+.closing::before{content:"";position:absolute;left:50%;top:50%;width:900px;height:500px;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(201,164,106,.08),transparent 70%);pointer-events:none}
+.closing blockquote{position:relative;font-family:var(--serif);font-size:clamp(27px,3.8vw,46px);line-height:1.55;letter-spacing:.04em;color:var(--ink);max-width:24em;margin:0 auto}
+.closing blockquote span{color:var(--gold-bright)}
+.closing cite{display:block;margin-top:24px;font-style:normal;font-family:var(--mono);font-size:9px;letter-spacing:.26em;color:var(--faint);text-transform:uppercase}
+.closing p{position:relative;margin-top:26px;font-size:13px;line-height:2;color:var(--muted)}
+.closing .btn{margin-top:32px;position:relative}
+.site-foot{border-top:1px solid var(--line);padding:26px 0 34px}
+.site-foot .container{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.foot-brand{font-family:var(--serif);font-size:14px;letter-spacing:.14em;color:var(--ink-2)}
+.foot-brand em{font-style:normal;font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--faint);margin-left:8px}
+.foot-note{font-size:10.5px;letter-spacing:.08em;color:var(--faint);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.foot-note kbd{font-size:9px;border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+
+/* ============ 12. SEARCH ============ */
+.search-overlay{position:fixed;inset:0;z-index:300;background:rgba(3,4,7,.68);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;justify-content:center;align-items:flex-start;padding:11vh 20px 20px}
+.search-panel{width:min(680px,100%);border:1px solid rgba(236,230,216,.14);border-radius:18px;background:#0b0e14;box-shadow:0 50px 120px -30px rgba(0,0,0,.9),0 0 0 1px rgba(0,0,0,.4);overflow:hidden}
+.search-input-row{display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.search-input-row svg{width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:1.5;flex-shrink:0}
+.search-input-row input{flex:1;min-width:0;background:none;border:0;outline:none;color:var(--ink);font-family:var(--sans);font-size:15px;letter-spacing:.02em}
+.search-input-row input::placeholder{color:var(--faint)}
+.search-input-row kbd{flex-shrink:0;font-size:9px;letter-spacing:.06em;color:var(--faint);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.search-results{max-height:49vh;overflow:auto;padding:8px}
+.search-item{display:grid;grid-template-columns:68px 1fr auto;gap:14px;align-items:center;width:100%;padding:11px 14px;border-radius:9px;text-align:left;transition:background .15s}
+.search-item:hover,.search-item.sel{background:rgba(255,255,255,.055)}
+.search-item .res-domain{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--muted);white-space:nowrap}
+.search-item .res-term{font-size:14px;color:var(--ink);letter-spacing:.02em}
+.search-item .res-term small{margin-left:8px;font-size:9px;letter-spacing:.1em;color:var(--faint);font-family:var(--mono)}
+.search-item .res-layer{font-size:9px;letter-spacing:.1em;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:1px 7px}
+.search-empty{padding:34px 20px 40px;text-align:center;color:var(--faint);font-size:12.5px}
+.search-hint{padding:10px 16px 20px;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.search-hint>span{font-size:9px;letter-spacing:.14em;color:var(--faint);margin-right:4px}
+.search-hint button{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 10px;transition:color .2s,border-color .2s}
+.search-hint button:hover{color:var(--ink);border-color:var(--line-strong)}
+.fade-enter-active,.fade-leave-active{transition:opacity .22s ease}
+.fade-enter-from,.fade-leave-to{opacity:0}
+.fade-enter-active .search-panel{transition:transform .25s var(--ease)}
+.fade-enter-from .search-panel{transform:translateY(-8px)}
+
+/* ============ 13. RESPONSIVE ============ */
+@media (max-width:1120px){
+  .hero-inner{grid-template-columns:minmax(340px,.95fr) minmax(0,1.05fr)}
+  .atlas-hint{top:6px;bottom:auto;right:8px}
+  .map-grid{grid-template-columns:repeat(6,1fr)}
+  .map-card{grid-column:span 2}
+  .map-card:nth-child(4){grid-column:2 / span 2}
+  .map-card:nth-child(5){grid-column:4 / span 2}
+}
+@media (max-width:900px){
+  :root{--nav-h:64px}
+  .nav-inner{grid-template-columns:1fr auto;padding:0 22px}
+  .nav-links{display:none}
+  .menu-btn{display:grid}
+  .search-btn span,.search-btn kbd{display:none}
+  .search-btn{padding:0;width:34px;justify-content:center}
+  .mobile-menu{display:block;position:fixed;inset:var(--nav-h) 0 0;z-index:190;padding:16px 18px 32px;overflow:auto;background:rgba(4,6,10,.76);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+  .mm-panel{border:1px solid var(--line);border-radius:16px;background:rgba(10,13,19,.93);padding:8px 4px;box-shadow:0 40px 80px -40px rgba(0,0,0,.9)}
+  .mm-label{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--faint);padding:12px 14px 4px}
+  .mm-link{display:grid;grid-template-columns:6px 1fr 16px;align-items:center;gap:13px;padding:13px 14px;border-top:1px solid var(--line);color:var(--ink-2);font-size:16px;letter-spacing:.04em}
+  .mm-link:first-of-type{border-top:0}
+  .mm-link i{width:5px;height:5px;border-radius:50%}
+  .mm-link em{display:block;margin-top:2px;font-style:normal;font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+  .mm-link b{font-weight:400;font-family:var(--serif);color:var(--faint);font-size:15px}
+  .hero{padding:calc(var(--nav-h) + 40px) 0 30px;min-height:auto}
+  .hero-inner{grid-template-columns:1fr;gap:6px;padding:0 22px}
+  .hero-copy{max-width:none}
+  .hero-visual{height:56vh;min-height:360px;max-height:520px;margin-top:4px}
+  .hero-meta{gap:30px;margin-top:30px}
+  .hero-scroll{display:none}
+  .atlas-legend{left:0;right:0;justify-content:center;border-radius:14px}
+  .manifesto{padding-top:76px}
+  .manifesto .container{grid-template-columns:1fr;gap:30px;padding-bottom:58px}
+  .manifesto-body{padding-bottom:0}
+  .section{padding:82px 0}
+  .map-grid{grid-template-columns:repeat(2,1fr)}
+  .map-card{grid-column:auto;min-height:210px}
+  .map-card:last-child{grid-column:span 2}
+  .domain{padding:82px 0 66px}
+  .domain-mark{display:none}
+  .domain-head h2{font-size:44px}
+  .domain-facts{gap:12px}
+  .domain-toggle{width:100%;margin-left:0;justify-content:center;margin-top:4px}
+  .domain-foot{grid-template-columns:1fr}
+  .bridge-grid{grid-template-columns:1fr}
+  .method-grid{grid-template-columns:1fr;gap:40px}
+  .method-intro{position:static}
+  .method-intro p{max-width:34em}
+  .readings{grid-template-columns:1fr;margin-top:44px}
+  .closing{padding:90px 0 84px}
+  .container{padding:0 22px}
+}
+@media (max-width:600px){
+  .brand{font-size:16px}
+  .brand em{display:none}
+  .hero-title{font-size:clamp(56px,17vw,76px);letter-spacing:.05em;margin-top:22px}
+  .hero-sub{font-size:17px}
+  .hero-lead{font-size:13.5px;line-height:1.95}
+  .hero-actions{margin-top:28px}
+  .btn{height:42px;padding:0 18px;font-size:12.5px}
+  .hero-meta{gap:24px;padding-top:18px}
+  .hero-meta strong{font-size:22px}
+  .hero-visual{height:44vh;min-height:300px}
+  .atlas-legend{display:none}
+  .atlas-legend button{font-size:9.5px;padding:4px 7px;gap:5px}
+  .atlas-legend em{display:none}
+  .atlas-hint{right:0;top:auto;bottom:-2px;font-size:8px}
+  .map-grid{grid-template-columns:1fr;gap:9px}
+  .map-card:last-child{grid-column:auto}
+  .map-card{min-height:0;padding:18px 18px 20px}
+  .map-card h3{margin-top:16px;font-size:24px}
+  .map-card p{font-size:12px}
+  .map-arrow{display:none}
+  .domain-head h2{font-size:38px;gap:10px}
+  .domain-verb{font-size:9px;padding:3px 8px}
+  .domain-q{font-size:16px;margin-top:16px}
+  .domain-thesis{font-size:12.5px}
+  .layer-head{grid-template-columns:32px 1fr;gap:12px}
+  .layer-roman{width:28px;height:28px;font-size:12px}
+  .layer-titles h3{font-size:18px;flex-wrap:wrap;gap:7px}
+  .layer-toggle{grid-column:2;justify-self:start;margin-top:4px}
+  .item-head{grid-template-columns:36px 1fr 18px;gap:9px;padding:15px 14px}
+  .item-num{padding-top:3px;font-size:8.5px}
+  .item-term{font-size:15px}
+  .item-term em{display:block;margin-left:0;margin-top:2px;font-size:8px}
+  .item-claim{font-size:12.5px;line-height:1.8}
+  .item-body-inner{padding:0 16px 0 59px}
+  .item.open .item-body-inner{padding-bottom:18px}
+  .item-text{font-size:13.5px;line-height:1.95}
+  .item-note{grid-template-columns:34px 1fr;gap:8px;padding-left:10px}
+  .item-note p{font-size:11.5px}
+  .foot-card{padding:18px}
+  .bridge{padding:22px}
+  .bridge h3{font-size:23px}
+  .bridge-def{font-size:13.5px}
+  .step{grid-template-columns:40px 1fr;gap:12px;padding:22px 0}
+  .step h3{font-size:19px}
+  .search-overlay{padding-top:8vh}
+  .search-item{grid-template-columns:52px 1fr auto;gap:10px;padding:10px}
+  .search-item .res-term small{display:none}
+  .table-wrap{margin-top:30px;border:0;background:none;overflow:visible;border-radius:0}
+  .matrix{display:block;min-width:0}
+  .matrix thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+  .matrix tbody{display:flex;flex-direction:column;gap:10px}
+  .matrix tr{display:block;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px 16px 8px}
+  .matrix td{display:grid;grid-template-columns:76px 1fr;gap:10px;padding:8px 0;border:0;font-size:12.5px;line-height:1.8}
+  .matrix td::before{content:attr(data-label);font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;color:var(--faint);padding-top:3px}
+  .matrix td:first-child{display:flex;align-items:center;padding:2px 0 12px;margin-bottom:4px;border-bottom:1px solid var(--line);font-size:19px}
+  .matrix td:first-child::before{display:none}
+  .matrix .q{max-width:none}
+  .site-foot .container{flex-direction:column;align-items:flex-start;gap:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  [data-reveal]{opacity:1;transform:none}
+  .marquee-track{animation:none}
+  .hero-scroll::after{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+<div class="progress" :style="{width: progress + '%'}"></div>
+<header class="nav" :class="{solid: scrolled}">
+  <div class="nav-inner">
+    <a class="brand" href="#top" @click.prevent="scrollTo('top')" aria-label="回到顶部">
+      <span class="brand-mark" aria-hidden="true"></span>
+      认知经纬<em>ATLAS</em>
+    </a>
+    <nav class="nav-links" aria-label="主导航">
+      <a v-for="d in domains" :key="d.id" :href="'#'+d.id" :class="{act: active===d.id}" @click.prevent="scrollTo(d.id)">{{ d.name }}</a>
+      <span class="nav-sep" aria-hidden="true"></span>
+      <a class="extra" href="#bridges" :class="{act: active==='bridges'}" @click.prevent="scrollTo('bridges')">暗线</a>
+      <a class="extra" href="#overview" :class="{act: active==='overview'}" @click.prevent="scrollTo('overview')">总览</a>
+      <a class="extra" href="#method" :class="{act: active==='method'}" @click.prevent="scrollTo('method')">五问</a>
+    </nav>
+    <div class="nav-tools">
+      <button class="search-btn" type="button" @click="openSearch" aria-label="搜索要义">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5 21 21"></path></svg>
+        <span>搜索要义</span><kbd>⌘K</kbd>
+      </button>
+      <button class="menu-btn" type="button" @click="menuOpen = !menuOpen" :aria-expanded="menuOpen ? 'true' : 'false'" aria-label="章节导航">
+        <i aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</header>
+<transition name="fade">
+  <div class="mobile-menu" v-if="menuOpen" @click="menuOpen = false">
+    <div class="mm-panel" @click.stop>
+      <p class="mm-label">五域</p>
+      <a v-for="d in domains" :key="d.id" class="mm-link" :href="'#'+d.id" @click.prevent="menuGo(d.id)">
+        <i :style="{background:d.color}" aria-hidden="true"></i>
+        <span>{{ d.name }}<em>{{ d.en }}</em></span>
+        <b aria-hidden="true">→</b>
+      </a>
+      <p class="mm-label">贯通</p>
+      <a class="mm-link" href="#bridges" @click.prevent="menuGo('bridges')"><i style="background:#c9a46a" aria-hidden="true"></i><span>六条暗线<em>THE SIX THREADS</em></span><b aria-hidden="true">→</b></a>
+      <a class="mm-link" href="#overview" @click.prevent="menuGo('overview')"><i style="background:#c9a46a" aria-hidden="true"></i><span>一页纸总览<em>ONE PAGE</em></span><b aria-hidden="true">→</b></a>
+      <a class="mm-link" href="#method" @click.prevent="menuGo('method')"><i style="background:#c9a46a" aria-hidden="true"></i><span>五问法<em>THE METHOD</em></span><b aria-hidden="true">→</b></a>
+    </div>
+  </div>
+</transition>
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Cognitive Atlas · 五域认知体系</p>
+      <h1 class="hero-title">认知<span>经纬</span></h1>
+      <p class="hero-sub">把复杂世界，拆成五种可用的眼光</p>
+      <p class="hero-lead">经济学看<strong>权衡</strong>，逻辑学看<strong>推理</strong>，哲学看<strong>前提</strong>，心理学看<strong>心智</strong>，社会学看<strong>处境</strong>。五个领域不是五座孤岛，而是同一张地图上的五个坐标。</p>
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="#atlas" @click.prevent="scrollTo('atlas')">进入星图 <em aria-hidden="true">↓</em></a>
+        <a class="btn btn-ghost" href="#method" @click.prevent="scrollTo('method')">如何阅读</a>
+      </div>
+      <div class="hero-meta" aria-label="体系规模">
+        <div><strong>5</strong><span>认知域</span></div>
+        <div><strong>6</strong><span>跨域暗线</span></div>
+        <div><strong>60</strong><span>核心要义</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <canvas id="atlas-canvas" tabindex="0" aria-label="三维知识星图。拖拽旋转，点击星体进入对应要义；聚焦后可用方向键旋转，数字键 1 到 5 跳转学科。"></canvas>
+      <div class="atlas-tip" id="atlasTip" aria-hidden="true"></div>
+      <div class="atlas-legend" aria-label="五域图例">
+        <button v-for="d in domains" :key="d.id" type="button" @click="scrollTo(d.id)">
+          <span class="legend-dot" :style="{background:d.color,color:d.color}"></span>{{ d.name }}<em>{{ d.verb }}</em>
+        </button>
+      </div>
+      <div class="atlas-hint">拖拽旋转 · 点击星体</div>
+    </div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true">Scroll to explore</div>
+</section>
+<main>
+<section class="manifesto">
+  <div class="container">
+    <p class="manifesto-quote">五个领域，<br>不是<em>五座孤岛</em>。</p>
+    <div class="manifesto-body">
+      <p>同一件事——一次涨价、一场争论、一种偏见、一条规则——都可以被五种眼光同时照亮。体系的价值不在答案的堆积，而在<strong>问题之间的连接</strong>。</p>
+      <span>这不是一套用来背诵的知识，而是一组用来提问的坐标。</span>
+    </div>
+  </div>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <div class="marquee-set" v-for="s in 2" :key="s">
+        <template v-for="t in marqueeTerms" :key="t"><span>{{ t }}</span><i>·</i></template>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="atlas">
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <p class="kicker">01 — The Map</p>
+      <h2>五个领域，五种坐标</h2>
+      <p class="lead">它们不是并列的学科清单，而是从不同层级回答同一个问题：<strong>人如何在世界中行动。</strong><br>经济学处理约束，逻辑学处理推理，哲学处理前提，心理学处理心智，社会学处理处境。</p>
+    </header>
+    <div class="map-grid">
+      <a v-for="(d, i) in domains" :key="d.id" class="map-card" :href="'#'+d.id" :style="{ '--accent': d.color, '--d': (i*70)+'ms' }" data-reveal @click.prevent="scrollTo(d.id)">
+        <span class="map-index">{{ d.index }}</span>
+        <span class="map-en">{{ d.en }}</span>
+        <h3>{{ d.name }}<em>{{ d.verb }}</em></h3>
+        <p>{{ d.question }}</p>
+        <span class="map-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+<section class="domain" v-for="d in domains" :id="d.id" :key="d.id" :style="{ '--accent': d.color }">
+  <div class="container">
+    <header class="domain-head" data-reveal>
+      <div class="domain-mark" aria-hidden="true">{{ d.index }}</div>
+      <p class="domain-kicker">{{ d.index }} / {{ d.en }}</p>
+      <h2>{{ d.name }} <span class="domain-verb">{{ d.verb }}</span></h2>
+      <p class="domain-q">{{ d.question }}</p>
+      <p class="domain-thesis">{{ d.thesis }}</p>
+      <div class="domain-facts">
+        <span>3 层结构</span><span class="sep" aria-hidden="true"></span>
+        <span>12 条要义</span><span class="sep" aria-hidden="true"></span>
+        <span>{{ d.interfaces.length }} 个跨域接口</span>
+        <button class="domain-toggle" type="button" @click="toggleDomain(d)">{{ isDomainOpen(d) ? '收起本域' : '展开本域' }}</button>
+      </div>
+    </header>
+    <div class="layer" v-for="(l, li) in d.layers" :key="l.label" data-reveal>
+      <div class="layer-head">
+        <span class="layer-roman" aria-hidden="true">{{ romans[li] }}</span>
+        <div class="layer-titles">
+          <h3>{{ l.label }}<i aria-hidden="true"></i>{{ l.title }}</h3>
+          <p>{{ l.summary }}</p>
+        </div>
+        <button class="layer-toggle" :class="{on: isLayerOpen(d, li)}" type="button" @click="toggleLayer(d, li)">
+          {{ isLayerOpen(d, li) ? '收起该层' : '展开该层' }}<span class="pm" aria-hidden="true">+</span>
+        </button>
+      </div>
+      <div class="item-list">
+        <article v-for="it in l.items" :key="it._key" :id="it._id" class="item" :class="{open: open[it._key], flash: flashKey===it._key}">
+          <button class="item-head" type="button" :aria-expanded="open[it._key] ? 'true' : 'false'" @click="toggle(it._key)">
+            <span class="item-num">{{ it._num }}</span>
+            <span class="item-main">
+              <span class="item-term">{{ it.term }}<em>{{ it.en }}</em></span>
+              <span class="item-claim">{{ it.claim }}</span>
+            </span>
+            <span class="item-plus" aria-hidden="true"></span>
+          </button>
+          <div class="item-body">
+            <div class="item-body-inner">
+              <p class="item-text">{{ it.body }}</p>
+              <div class="item-note" v-if="it.caution"><span>边界</span><p>{{ it.caution }}</p></div>
+              <div class="item-note example" v-if="it.example"><span>例子</span><p>{{ it.example }}</p></div>
+              <div class="item-links" v-if="it.link">
+                <button type="button" @click="scrollTo('bridges')">暗线 · {{ it.link }}</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+    <div class="domain-foot" data-reveal>
+      <div class="foot-card">
+        <h4>跨域接口 / Interfaces</h4>
+        <button class="interface" v-for="x in d.interfaces" :key="x.to" type="button" @click="scrollTo(x.to)">
+          <span class="dot" :style="{ background: dom(x.to).color, color: dom(x.to).color }" aria-hidden="true"></span>
+          <span><strong>{{ dom(x.to).name }}</strong><span class="note">{{ x.note }}</span></span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+      <div class="foot-card">
+        <h4>常见误用 / Pitfalls</h4>
+        <ul class="errors">
+          <li v-for="e in d.errors" :key="e">{{ e }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section bridges" id="bridges">
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <p class="kicker">03 — The Six Threads</p>
+      <h2>六条暗线，把五域缝在一起</h2>
+      <p class="lead">真正让知识成为体系的，不是学科分区，而是反复出现在不同领域里的同一批概念。<br>它们像暗线，穿过五个领域，<strong>每一条都可以单独成为一条研究路径。</strong></p>
+    </header>
+    <div class="bridge-grid">
+      <article class="bridge" v-for="(b, bi) in bridges" :key="b.id" :style="{ '--c1': dom(b.a).color, '--d': (bi%2)*80+'ms' }" data-reveal>
+        <div class="bridge-top">
+          <span class="bridge-roman">{{ bridgeNumerals[bi] }}</span>
+          <span class="bridge-dots" aria-hidden="true">
+            <i v-for="dd in domains" :key="dd.id" :class="{on: b.domains.includes(dd.id)}" :style="b.domains.includes(dd.id) ? { background: dd.color, color: dd.color } : null"></i>
+          </span>
+        </div>
+        <h3>{{ b.name }}<em>{{ b.en }}</em></h3>
+        <p class="bridge-def">{{ b.def }}</p>
+        <p class="bridge-insight">{{ b.insight }}</p>
+        <div class="bridge-conn">
+          <span v-for="id in b.domains" :key="id">{{ dom(id).name }}</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="overview">
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <p class="kicker">04 — One Page</p>
+      <h2>一页纸总览</h2>
+      <p class="lead">如果你只有五分钟，读这一页。把每一行当成一副眼镜：遇到问题时，换一副，世界就会换一种样子。</p>
+    </header>
+    <div class="table-wrap" data-reveal>
+      <table class="matrix">
+        <thead>
+          <tr><th>领域</th><th>看世界的姿势</th><th>核心问题</th><th>关键工具</th><th>典型谬误</th></tr>
+        </thead>
+        <tbody>
+          <tr v-for="d in domains" :key="d.id">
+            <td><span :style="{ background: d.color, color: d.color }" aria-hidden="true"></span>{{ d.name }}</td>
+            <td class="stance" data-label="姿势">{{ d.stance }}</td>
+            <td class="q" data-label="核心问题">{{ d.question }}</td>
+            <td data-label="关键工具">{{ d.tools }}</td>
+            <td class="pit" data-label="典型谬误">{{ d.pitfall }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="method">
+  <div class="container">
+    <div class="method-grid">
+      <div class="method-intro" data-reveal>
+        <p class="kicker">05 — The Method</p>
+        <h2>遇到一件事，<br>依次问<em>五个问题</em>。</h2>
+        <p>五问不必严格按顺序，但缺一问，判断就会少一个维度。它不是决策公式，而是一套防止过早下结论的检查表。</p>
+        <div class="method-principles">
+          <span><i>01</i>先框架，后细节</span>
+          <span><i>02</i>先问题，后答案</span>
+          <span><i>03</i>先分歧，后共识</span>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step" v-for="(s, si) in steps" :key="s.q" :style="{ '--accent': dom(s.domain).color, '--d': (si*60)+'ms' }" data-reveal>
+          <span class="step-num">{{ s.num }}</span>
+          <div>
+            <h3>{{ s.q }}</h3>
+            <p>{{ s.note }}</p>
+            <span class="step-tag">{{ dom(s.domain).name }} · {{ dom(s.domain).verb }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="readings">
+      <div class="reading" v-for="(r, ri) in readings" :key="r.title" :style="{ '--d': (ri*80)+'ms' }" data-reveal>
+        <span class="time">{{ r.time }}</span>
+        <h4>{{ r.title }}</h4>
+        <p>{{ r.note }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<section class="closing">
+  <div class="container">
+    <blockquote>“所有模型都是错的，<br>但<span>有些是有用的</span>。”</blockquote>
+    <cite>George E. P. Box</cite>
+    <p>这套体系也是一个模型。用它提问，不要用它代替思考。</p>
+    <a class="btn btn-ghost" href="#top" @click.prevent="scrollTo('top')">回到星图 ↑</a>
+  </div>
+</section>
+<footer class="site-foot">
+  <div class="container">
+    <span class="foot-brand">认知经纬<em>COGNITIVE ATLAS</em></span>
+    <div class="foot-note">
+      <span>五域 · 六线 · 五问</span>
+      <span>学习自用地图 · 2026</span>
+      <span>按 <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd> 搜索要义</span>
+    </div>
+  </div>
+</footer>
+<transition name="fade">
+  <div class="search-overlay" v-if="searchOpen" @click.self="closeSearch">
+    <div class="search-panel" role="dialog" aria-modal="true" aria-label="搜索要义">
+      <div class="search-input-row">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5 21 21"></path></svg>
+        <input ref="searchInput" v-model="query" type="text" placeholder="搜索 60 条要义：机会成本、基础比率、惯习……" aria-label="输入关键词">
+        <kbd>ESC</kbd>
+      </div>
+      <div class="search-results" v-if="query">
+        <button class="search-item" v-for="(r, ri) in results" :key="r._key" :class="{sel: ri===sel}" type="button" @click="goResult(r)" @mouseenter="sel=ri">
+          <span class="res-domain" :style="{ color: r._domain.color }">{{ r._domain.name }}</span>
+          <span class="res-term">{{ r.term }}<small>{{ r.en }}</small></span>
+          <span class="res-layer">{{ r._layer.label }}</span>
+        </button>
+        <p class="search-empty" v-if="!results.length">没有找到。试试更短、更通用的关键词。</p>
+      </div>
+      <div class="search-hint" v-else>
+        <span>试试</span>
+        <button v-for="h in hints" :key="h" type="button" @click="query=h">{{ h }}</button>
+      </div>
+    </div>
+  </div>
+</transition>
+</div>
+<script src="https://cdn.staticfile.org/vue/3.4.21/vue.global.prod.js"></script>
+<script>
+const DOMAINS = [
+{
+  id: 'economics', index: '01', name: '经济学', en: 'ECONOMICS', verb: '权衡', color: '#D8A657',
+  stance: '权衡',
+  question: '在稀缺条件下，人如何选择？这些选择又如何汇聚成秩序？',
+  thesis: '经济学不研究“钱”，它研究约束下的选择。价格只是这套语言里最显眼的一个词。',
+  tools: '边际分析 · 均衡 · 激励设计 · 反事实',
+  pitfall: '沉没成本 · 单变量归因',
+  layers: [
+    { label: '地基', title: '稀缺、代价与边际', summary: '一切经济分析的四块基石。', items: [
+      { term: '稀缺性', en: 'Scarcity', claim: '资源相对于欲望永远不足，所以每一个“是”背后都有一个“否”。',
+        body: '经济学从稀缺出发，而不是从货币出发。时间、注意力、信任与合法性同样是稀缺资源。稀缺意味着选择必然伴随放弃，也意味着“什么都要”在逻辑上不成立。',
+        caution: '稀缺不等于短缺：短缺是价格受限下的供不应求，稀缺是永恒条件。',
+        example: '免费的平台并不免费，你付出的价格是你的注意力与数据。' },
+      { term: '机会成本', en: 'Opportunity Cost', claim: '一件东西的真实价格，是你为它放弃的最好替代方案。',
+        body: '会计成本记录支出，机会成本记录放弃。后者往往不可见，却决定选择的质量。读研的成本不只是学费，还包括这几年最好的工作机会与经验积累。',
+        caution: '沉没成本已经发生且不可回收，不应进入边际决策；机会成本只在存在替代方案时成立。',
+        link: '理性' },
+      { term: '边际思维', en: 'Marginal Thinking', claim: '决策发生在“再多一单位”处，而不是在平均值处。',
+        body: '总量告诉你处境，边际告诉你下一步。水和钻石的悖论、为什么“再刷一集”越来越不值得、为什么企业招到第 50 个人时效率开始下降，都是边际问题。',
+        caution: '用平均成本代替边际成本，是最常见的决策错误之一。',
+        example: '自助餐吃到“回本”为止，是用平均思维替代了边际效用。' },
+      { term: '激励反应', en: 'Incentives', claim: '人会对激励做出反应，而且常常以设计者没有预料的方式反应。',
+        body: '价格、奖金、罚款、考核、点赞都是激励。古德哈特定律：当一个指标成为目标，它就不再是好指标。理解行为，先看激励结构，而不是先问人品。',
+        caution: '外在奖励可能挤出内在动机；惩罚过度会制造隐瞒，而不是合规。',
+        link: '激励' }
+    ]},
+    { label: '机制', title: '市场、交换与失灵', summary: '当个体选择汇聚成价格、分工与失灵。', items: [
+      { term: '价格与均衡', en: 'Price & Equilibrium', claim: '价格同时做三件事：传递信息、提供激励、分配资源。',
+        body: '哈耶克称价格是一种“知识节约装置”：没有人掌握全部信息，但价格把分散的知识压缩成一个可读的信号。均衡不是瞬间达成的状态，而是不断被冲击打破的倾向。',
+        caution: '价格管制会改变激励与信息，但不一定改善处境；要看短缺、排队与黑市由谁承担。',
+        link: '理性' },
+      { term: '比较优势', en: 'Comparative Advantage', claim: '即使一方样样更强，按相对机会成本分工，双方仍能同时受益。',
+        body: '绝对优势问“谁做得更好”，比较优势问“谁放弃得更少”。这是贸易、外包与团队分工的底层逻辑，也是个人应该专注长板的理由。',
+        caution: '比较优势假设要素可流动、调整成本可承受；现实中受损者往往集中，且声音更大。' },
+      { term: '外部性与公共品', en: 'Externality & Public Goods', claim: '当成本或收益溢出到交易之外，价格就说谎了。',
+        body: '污染是负外部性，疫苗与教育是正外部性；灯塔与国防是公共品（非排他、非竞争）。庇古主张征税或补贴，科斯主张界定产权并降低交易成本，奥斯特罗姆证明共同体可以自组织治理公地。',
+        caution: '“市场失灵”不等于“政府一定成功”；监管也可能被俘获、信息不足、激励扭曲。' },
+      { term: '信息不对称', en: 'Asymmetric Information', claim: '当一方知道得更多，市场会退化，甚至只剩下劣质品。',
+        body: '逆向选择发生在签约前（旧车市场、保险），道德风险发生在签约后（买了全险就不好好停车）。信号（文凭、质保、品牌）与筛选（体检、试用期）是对策。',
+        caution: '不要把“信息不对称”当作万能解释；先问：谁不知道什么，代价由谁承担。' }
+    ]},
+    { label: '演化', title: '制度、增长与不确定', summary: '把时间、规则与不确定性放回画面。', items: [
+      { term: '制度与交易成本', en: 'Institutions', claim: '市场不是自然状态，而是一套昂贵的制度装置。',
+        body: '科斯问：既然市场这么好，为什么还有企业？答案是交易成本。诺斯补充：产权、契约、法律与信任降低不确定性，使远距离合作成为可能。制度是博弈的规则，也是历史的沉淀。',
+        caution: '制度不是写在纸上的条文，而是实际被执行的激励与预期。',
+        link: '制度' },
+      { term: '增长与生产率', en: 'Growth & Productivity', claim: '长期富裕来自生产率，而不是资本堆积。',
+        body: '资本、劳动、技术共同决定产出，但持续增长的主要来源是全要素生产率——更好的技术、组织方式与人力资本。制度决定一个社会把多少聪明才智投入“做大蛋糕”，而不是“分蛋糕”。',
+        caution: '把 GDP 增长等同于发展，会忽略分配、环境与闲暇；增长是手段，不是目的。',
+        link: '制度' },
+      { term: '货币与预期', en: 'Money & Expectations', claim: '货币是信任的载体，通胀是预期的自我实现。',
+        body: '货币降低了物物交换的“双重巧合”难题。通胀不仅是货币现象，也取决于人们相信价格会涨多久。预期一旦脱锚，政策成本会急剧上升，这就是卢卡斯批判。',
+        caution: '用“印钱等于通胀”的单一公式解释一切，会忽略产能、需求与预期的时滞。',
+        link: '理性' },
+      { term: '博弈与均衡', en: 'Games & Equilibrium', claim: '当每个人的选择都取决于别人的选择，理性会走进策略的迷宫。',
+        body: '纳什均衡：给定他人策略，没有人愿意单方面改变。囚徒困境揭示个体理性与集体理性的裂缝；重复博弈、声誉与惩罚可以把合作变成均衡。',
+        caution: '均衡不等于好结果；也不要假设对手和你一样理性。',
+        link: '理性' }
+    ]}
+  ],
+  interfaces: [
+    { to: 'logic', note: '用反事实与识别策略支撑因果结论' },
+    { to: 'psychology', note: '有限理性修正“经济人”假设' },
+    { to: 'sociology', note: '制度不仅是激励，也是规范与权力' }
+  ],
+  errors: [
+    '让沉没成本进入下一步决策',
+    '把相关关系直接当作因果',
+    '用平均值代替边际做判断',
+    '忽视均衡与政策的次生效应'
+  ]
+},
+{
+  id: 'logic', index: '02', name: '逻辑学', en: 'LOGIC', verb: '区分', color: '#6FB8CE',
+  stance: '区分',
+  question: '什么样的推理是保真的？我们凭什么相信一个结论？',
+  thesis: '逻辑不负责让你显得聪明，它负责让你的错误暴露得更早。',
+  tools: '论证重建 · 反例 · 贝叶斯 · 因果识别',
+  pitfall: '肯定后件 · 基础比率忽视',
+  layers: [
+    { label: '地基', title: '论证与有效性', summary: '先把“凭什么”问清楚。', items: [
+      { term: '论证结构', en: 'Arguments', claim: '任何一个结论，都站在一组前提上；看不见的前提最危险。',
+        body: '论证由前提、推理与结论组成。日常表达常省略前提，比如“他迟到，所以不靠谱”，省略的是“迟到者不靠谱”。重建论证，就是把这些隐含前提摆到桌面上。',
+        caution: '区分“解释”与“论证”：解释回答“为什么发生”，论证回答“凭什么相信”。' },
+      { term: '有效与可靠', en: 'Validity & Soundness', claim: '有效关心形式，可靠关心内容；逻辑只保证前者。',
+        body: '有效：如果前提为真，结论不可能为假。可靠：有效，且前提确实为真。一个论证可以有效却荒谬：“所有猫会飞；这是猫；所以它会飞。”逻辑不负责事实，只负责传递。',
+        caution: '结论为真不代表论证有效；结论为假也不代表论证无效。',
+        example: '“所有鸟会飞；企鹅是鸟；所以企鹅会飞”——形式有效，前提为假。' },
+      { term: '演绎与常见错误', en: 'Deduction', claim: '四种基本推理形式，撑起了大部分严谨思考。',
+        body: '肯定前件（P→Q，P，所以 Q）与否定后件（P→Q，非 Q，所以非 P）是有效的；否定前件与肯定后件是无效的。三段论还要防止中项不周延与四词谬误。',
+        caution: '“如果努力就能成功”与“他成功了”，推不出“他努力”——这是肯定后件。',
+        link: '理性' },
+      { term: '量词与反例', en: 'Quantifiers & Counterexamples', claim: '一个反例足以推翻“所有”，但一百个例子也证明不了它。',
+        body: '“所有、有些、没有”的精确含义，决定了论证能否成立。科学命题多为全称，因此可证伪；存在命题需要实例。反驳一个全称命题，最经济的方式是找到边界案例。',
+        caution: '小心把“有些”偷换成“所有”，或用极端案例否定统计规律。' }
+    ]},
+    { label: '进阶', title: '归纳、概率与因果', summary: '从确定的形式，走向不确定的世界。', items: [
+      { term: '归纳问题', en: 'Problem of Induction', claim: '过去重复一万次，也不能在演绎上保证下一次。',
+        body: '休谟指出：我们相信太阳明天会升起，靠的是习惯与心理预期，而不是逻辑必然。古德曼的“绿蓝”悖论进一步说明：归纳需要预设“自然类”，而自然类本身无法被归纳证明。',
+        caution: '归纳不可靠，不等于它无用；它是我们唯一能用来学习的工具，只是需要被校准。' },
+      { term: '概率与贝叶斯', en: 'Probability & Bayes', claim: '判断一个证据，必须同时看它在新旧假设下的出现概率。',
+        body: '贝叶斯更新：后验 ∝ 先验 × 似然。医生看到阳性检测，不能直接说“你 95% 有病”，还要看基础发病率。忽略基础比率，是最普遍的统计错误。',
+        caution: '先验不是偏见，而是必须显式写出的假设；没有先验，证据无法单独说话。',
+        example: '罕见病检测灵敏度 99%，若患病率 0.1%，阳性者真正患病的概率仍可能只有约 9%。',
+        link: '因果' },
+      { term: '因果推断', en: 'Causal Inference', claim: '相关不等于因果，识别因果需要反事实。',
+        body: '混杂、选择偏差与反向因果都会制造虚假相关。随机对照实验通过随机化切断混杂；自然实验、断点回归、双重差分则利用外部冲击。因果问题是“如果当时不这样，会怎样”。',
+        caution: '回归系数不是因果效应；控制变量也不是越多越好，可能引入对撞偏差。',
+        link: '因果' },
+      { term: '统计素养', en: 'Statistical Literacy', claim: 'p 值不是“结论为真的概率”，显著性也不等于重要性。',
+        body: 'p 值回答：若原假设为真，出现当前或更极端数据的概率。它受样本量影响巨大；小效应在大样本下也会显著。还要警惕多重比较、选择性报告与效应量缺失。',
+        caution: '“统计显著”是一个门槛，不是一个结论；先看效应量，再看不确定性。' }
+    ]},
+    { label: '边界', title: '悖论与限度', summary: '知道逻辑在哪里停止。', items: [
+      { term: '形式系统与哥德尔', en: 'Formal Systems & Gödel', claim: '足够强大的形式系统，必然存在它自己无法证明的真命题。',
+        body: '哥德尔不完全性定理：任何包含算术的一致形式系统中，都存在不可判定命题；系统也无法在自身内部证明自己的一致性。这不是数学的失败，而是形式化的边界。',
+        caution: '不要把它滥用到“一切皆不可知”；它只约束特定条件下的形式系统。' },
+      { term: '悖论', en: 'Paradox', claim: '悖论是概念边界的探针，不是文字游戏。',
+        body: '说谎者悖论（“这句话是假的”）暴露自指与真值谓词的张力；罗素悖论动摇了朴素集合论；意外考试悖论挑战“知道”与“必然”的关系。每一次悖论，都逼我们重修概念的边界。',
+        caution: '遇到悖论先别急着否定前提，它往往说明语言层次被混淆了。' },
+      { term: '非形式谬误', en: 'Informal Fallacies', claim: '大多数错误推理不是形式错误，而是偷偷换了战场。',
+        body: '稻草人、人身攻击、诉诸权威或大众、假两难、滑坡、循环论证、以偏概全、举证责任倒置。它们共同的特点是：绕开结论本身，去操纵接受结论的心理条件。',
+        caution: '指出谬误不等于结论为假；谬误只说明论证不合格，结论仍可能为真。',
+        link: '心智' },
+      { term: '逻辑的边界', en: 'Limits of Logic', claim: '逻辑保证“传递”，不保证“发现”。',
+        body: '演绎不能产生前提之外的新知识；科学发现依赖类比、隐喻、模型与猜测。逻辑的真正作用是：在众多猜测中，淘汰不自洽的那些。',
+        caution: '把“逻辑严谨”当作“观点正确”，是一种范畴错误。',
+        link: '理性' }
+    ]}
+  ],
+  interfaces: [
+    { to: 'philosophy', note: '为知识、真理与因果提供形式骨架' },
+    { to: 'psychology', note: '解释人为何系统性偏离有效推理' },
+    { to: 'economics', note: '把策略互动写成可解的博弈' }
+  ],
+  errors: [
+    '肯定后件或否定前件',
+    '忽视基础比率与先验',
+    '把 p 值当成结论为真的概率',
+    '用“这是谬误”直接判定结论为假'
+  ]
+},
+{
+  id: 'philosophy', index: '03', name: '哲学', en: 'PHILOSOPHY', verb: '追问', color: '#9C8CD8',
+  stance: '追问',
+  question: '存在什么？我们如何知道？应该如何活？',
+  thesis: '哲学不急着给答案，它先检查问题本身是否问对了。',
+  tools: '概念分析 · 思想实验 · 立场对照',
+  pitfall: '立场当论证 · 范畴错误',
+  layers: [
+    { label: '地基', title: '提问的方式', summary: '不急着回答，先学会把问题问对。', items: [
+      { term: '概念分析', en: 'Conceptual Analysis', claim: '哲学不生产新事实，它把含混的概念擦干净。',
+        body: '什么是知识、正义、自由、意识？苏格拉底式追问：给出定义，寻找反例，再修正定义。概念清晰之后，许多争论会自动消解，剩下的才是真问题。',
+        caution: '概念分析不能替代经验研究；它只负责把问题问对。' },
+      { term: '思想实验', en: 'Thought Experiments', claim: '在现实中无法隔离的变量，可以在想象中隔离。',
+        body: '电车难题测试后果与义务的冲突；缸中之脑测试知识与实在；中文房间测试理解与模拟；无知之幕测试公平。思想实验的价值在于：把直觉推到极端，看它是否仍然自洽。',
+        caution: '直觉可能是被文化塑造的；思想实验的结论需要论证支撑，而不是“我觉得”。' },
+      { term: '知识与确证', en: 'Knowledge & Justification', claim: '知识不只是“相信了并且碰巧对了”。',
+        body: '传统定义是：知识等于确证的真信念。盖蒂尔反例显示，即使三者齐备，也可能只是运气。于是可靠性、无运气条件、德性知识论相继登场。怀疑论则不断追问：你的确证链条在哪里停止？',
+        caution: '“我相信”“这是真的”“我有理由”三者要分开检验。',
+        link: '因果' },
+      { term: '理性主义与经验主义', en: 'Rationalism & Empiricism', claim: '知识来自理性还是经验？康德说：两者都不可或缺。',
+        body: '理性主义（笛卡尔、莱布尼茨）强调先验结构与演绎；经验主义（洛克、休谟）强调感官与归纳。康德折中：内容来自经验，形式来自心灵。先天综合判断成为可能的条件，是心智的构造。',
+        caution: '不要把“经验主义”理解为“只相信个人经历”；它指的是关于知识来源的立场。' }
+    ]},
+    { label: '主干', title: '三个永恒问题', summary: '存在、心灵与应当。', items: [
+      { term: '存在、因果与自由', en: 'Being, Causality & Freedom', claim: '自由不是“没有原因”，而是“按自己的意愿行动而不受强制”。',
+        body: '决定论主张一切事件都有原因；硬决定论否认自由，相容论重新定义自由：如果你能按自己的欲望行动，且欲望没有被操纵，你就是自由的。休谟则把因果还原为习惯性联想，引发至今未决的争论。',
+        caution: '把“决定论”等同于“宿命论”，混淆了因果必然性与人的能动性。',
+        link: '因果' },
+      { term: '心灵与意识', en: 'Mind & Consciousness', claim: '为什么信息处理会伴随“感觉起来像什么”？这是意识的难问题。',
+        body: '二元论、物理主义、功能主义各自解释心智。功能主义认为心智是功能状态，不依赖具体材质；但“中文房间”质疑：执行功能是否等于理解？查尔默斯区分意识的“容易问题”（机制）与“难问题”（主观体验）。',
+        caution: '用神经活动解释意识，可能只解释了相关物，而没有解释体验本身。',
+        link: '心智' },
+      { term: '伦理学三系', en: 'Three Ethical Frameworks', claim: '义务论问规则，后果论问结果，德性论问“好人会怎么做”。',
+        body: '康德：人不能只被当作手段。功利主义：最大多数人的最大幸福，但要面对分配与权利的难题。亚里士多德：德性是在实践中养成的中道。三者不是互相替代，而是回答不同层面的问题。',
+        caution: '用一个框架套所有情境，会丢失另外两个维度；伦理判断需要多框架交叉检验。',
+        link: '规范' },
+      { term: '正义与制度', en: 'Justice & Institutions', claim: '正义不是“谁更强”，而是“在公平条件下你会同意什么规则”。',
+        body: '罗尔斯用无知之幕推出两条原则：平等的自由，以及差异原则——不平等只有在最有利于最弱势者时才正当。诺齐克强调持有正义与最小国家；社群主义则追问：抽象的个体是否存在？',
+        caution: '程序正义不能保证结果正义；结果正义也不能任意侵犯基本权利。',
+        link: '制度' }
+    ]},
+    { label: '边界', title: '语言、科学与意义', summary: '哲学在边界上工作。', items: [
+      { term: '语言与意义', en: 'Language & Meaning', claim: '很多哲学问题，源于我们把语言用错了地方。',
+        body: '弗雷格区分涵义与指称；维特根斯坦后期主张意义即用法，语言是生活形式的游戏。语言转向之后，哲学从“世界是什么”转向“我们如何谈论世界”。',
+        caution: '不要用“这是语义问题”逃避实质争论；有些语义混乱背后是真问题。' },
+      { term: '科学哲学', en: 'Philosophy of Science', claim: '科学不是一堆正确结论，而是一套自我纠错的制度。',
+        body: '波普尔：可证伪性是科学的分界；库恩：常规科学在范式内解题，危机导致革命；拉卡托斯：研究纲领有硬核与保护带。实在论与反实在论仍在争论：科学理论是描述世界，还是组织经验？',
+        caution: '“科学也会错”不能推出“科学与迷信等价”；关键在纠错机制是否存在。' },
+      { term: '存在与意义', en: 'Existence & Meaning', claim: '意义不是被发现的，而是在行动与选择中被构造的。',
+        body: '克尔凯郭尔强调主观真理与信仰跳跃；尼采宣布“上帝死了”，要求人重估价值；海德格尔讨论“向死而生”；萨特说存在先于本质——人首先存在，然后通过选择定义自己。',
+        caution: '存在主义不等于虚无主义；它把意义的责任交还给人，而不是取消意义。',
+        link: '心智' },
+      { term: '如何做哲学', en: 'How to Philosophize', claim: '哲学的价值不在给出终审答案，而在把问题问得更清楚。',
+        body: '四步：重建论证、区分概念层次、寻找反例、对照竞争立场。好的哲学写作不是表态，而是让对手的立场也变得可理解。',
+        caution: '不要把“深刻”当作“晦涩”的许可证；真正的清晰往往更难。',
+        link: '理性' }
+    ]}
+  ],
+  interfaces: [
+    { to: 'logic', note: '论证是哲学写作的语法' },
+    { to: 'psychology', note: '意识、自我与情绪的交汇处' },
+    { to: 'sociology', note: '正义原则如何落到制度与历史' }
+  ],
+  errors: [
+    '把立场当论证，把态度当理由',
+    '犯范畴错误：用一类事物解释另一类',
+    '从“是”直接推出“应当”',
+    '用相对主义取消一切判断'
+  ]
+},
+{
+  id: 'psychology', index: '04', name: '心理学', en: 'PSYCHOLOGY', verb: '觉察', color: '#E08A9B',
+  stance: '觉察',
+  question: '心智如何运作？人为什么会这样想、这样做？',
+  thesis: '心理学最反直觉的发现，是“我了解我自己”这句话本身并不可靠。',
+  tools: '偏差清单 · 实验 · 环境设计',
+  pitfall: '巴纳姆效应 · 特质归因',
+  layers: [
+    { label: '地基', title: '建构的心智', summary: '你感知的世界，是大脑生成的模型。', items: [
+      { term: '感知是建构', en: 'Perception as Construction', claim: '大脑不是接收世界，而是根据预测生成世界。',
+        body: '视觉依赖先验假设与上下文；错觉是预测系统的副产品。预测加工理论认为，心智不断生成预测，并用感觉输入修正误差。你看到的，是你预期看到的。',
+        caution: '“感知是建构”不意味着“世界不存在”；它说明经验经过了加工。' },
+      { term: '注意是瓶颈', en: 'Attention', claim: '注意力是稀缺资源，意识一次只能处理很少的信息。',
+        body: '无意视盲、变化盲、注意力瞬脱证明：看见不等于注意到。多任务处理本质是快速切换，切换有成本。注意力流向哪里，你的现实就由哪里构成。',
+        caution: '把“我没看见”当作“它不存在”，是知觉层面的以偏概全。' },
+      { term: '记忆是重建', en: 'Memory as Reconstruction', claim: '记忆不是录像回放，而是每次提取时的重新拼装。',
+        body: '记忆受图式、情绪与事后信息影响；目击者证词、闪光灯记忆都可能被污染。提取练习能增强记忆，过度重读则制造“熟悉感”的错觉。',
+        caution: '生动的记忆不等于准确的记忆；确信度与准确率并不总相关。' },
+      { term: '双系统', en: 'Dual Systems', claim: '系统 1 快速、自动、直觉；系统 2 缓慢、费力、审慎。',
+        body: '大部分判断由系统 1 完成，系统 2 往往只负责事后合理化。这并不是缺陷：启发式在多数日常情境中高效，但在统计、概率与长远决策中容易系统性地出错。',
+        caution: '“系统 2 更理性”也是误解；它懒惰、容量有限，且同样会被动机污染。',
+        link: '理性' }
+    ]},
+    { label: '机制', title: '偏差、动机与情绪', summary: '判断如何偏离，行动如何被驱动。', items: [
+      { term: '认知偏差', en: 'Cognitive Biases', claim: '偏差不是愚蠢，而是高效启发式在特定环境中的代价。',
+        body: '锚定、可得性、确认偏误、框架效应、损失厌恶、过度自信。偏差清单不是用来贴标签，而是用来设计决策流程：盲评、清单、预演失败、寻找反面证据。',
+        caution: '知道偏差不等于免疫偏差；靠流程对抗，比靠意志力可靠。',
+        link: '因果' },
+      { term: '动机', en: 'Motivation', claim: '人不仅为奖励行动，也为自主、胜任与归属行动。',
+        body: '内在动机与外在动机不是简单叠加。过度理由效应：给本来喜欢的事加奖励，可能让兴趣变成交易。自我决定论指出：满足自主、胜任、归属三种需要，动机才可持续。',
+        caution: '“奖励一定有效”是管理中最昂贵的错觉之一。',
+        link: '激励' },
+      { term: '情绪与决策', en: 'Emotion & Decision', claim: '情绪不是理性的对立面，而是决策的必要组件。',
+        body: '达马西奥的躯体标记假说：情绪为选项赋予价值标签，帮助快速取舍。没有情绪的人并非更理性，而是无法决策。情绪调节的关键是命名、接纳与重构，而不是压抑。',
+        caution: '“保持冷静”不等于“没有情绪”；压抑会反弹，重构才有效。',
+        link: '心智' },
+      { term: '学习与习惯', en: 'Learning & Habit', claim: '习惯由提示、惯常行为与奖赏构成；改变习惯，先改变环境。',
+        body: '间隔重复、提取练习、交错练习比集中重读更有效。意志力是有限且不稳定的资源，环境设计比自我对抗更可靠。小步、即时反馈、可恢复的失败，是可持续学习的三个条件。',
+        caution: '把“自律”道德化，会掩盖环境与系统设计的问题。' }
+    ]},
+    { label: '社会', title: '他人、群体与改变', summary: '心智从不独自运作。', items: [
+      { term: '社会认知', en: 'Social Cognition', claim: '我们判断他人时，高估性格，低估情境。',
+        body: '基本归因错误：他迟到是因为懒，我迟到是因为堵车。行动者与观察者差异、自利偏差、刻板印象都是认知捷径的产物。刻板印象节省认知成本，但会系统性地伤害个体。',
+        caution: '理解情境不等于免除责任；解释与辩护是两件事。',
+        link: '因果' },
+      { term: '从众与服从', en: 'Conformity & Obedience', claim: '情境的力量，常常大于我们以为自己拥有的品格。',
+        body: '阿希实验显示，即使答案显而易见，群体压力也能让人改口；米尔格拉姆实验显示，权威与渐进承诺能让普通人服从伤害性指令。角色、制服、免责结构都会改变行为。',
+        caution: '不要把实验结论简化为“人性本恶”；它揭示的是情境与责任的分配。',
+        link: '规范' },
+      { term: '群体动力学', en: 'Group Dynamics', claim: '群体既放大智慧，也放大愚蠢。',
+        body: '内群体偏私、群体极化（讨论后立场更极端）、去个体化（匿名降低约束）、旁观者效应（责任分散）、群体思维（追求一致压制异议）。独立判断、匿名表达、预设反对者角色，可以部分对冲。',
+        caution: '“群体一定比个人更聪明”只在满足独立性、多样性与聚合机制时成立。' },
+      { term: '改变与疗愈', en: 'Change & Healing', claim: '改变不靠顿悟，靠安全的关系、可重复的练习与可承受的暴露。',
+        body: '心理治疗的有效共同因素包括治疗同盟、希望、暴露与认知重构。习惯改变依赖小步与环境；诊断标签既提供理解，也可能固化身份。改变是过程，不是意志的瞬间胜利。',
+        caution: '不要把心理咨询当作万能；生物、社会与意义层面的问题需要各自处理。',
+        link: '心智' }
+    ]}
+  ],
+  interfaces: [
+    { to: 'economics', note: '偏好、激励与有限理性' },
+    { to: 'sociology', note: '情境与结构如何塑造行为' },
+    { to: 'philosophy', note: '心智与意识仍是哲学难题' }
+  ],
+  errors: [
+    '接受巴纳姆式的模糊描述',
+    '把人格特质当成命运',
+    '用单一实验外推到所有人',
+    '忽视情境、动机与解释的多样性'
+  ]
+},
+{
+  id: 'sociology', index: '05', name: '社会学', en: 'SOCIOLOGY', verb: '处境', color: '#7FB89A',
+  stance: '处境',
+  question: '社会如何塑造个人，个人又如何再生产或改变社会？',
+  thesis: '社会学提醒你：很多“个人选择”，其实是结构在你身上做出的选择。',
+  tools: '结构分析 · 网络 · 比较历史',
+  pitfall: '个体化归因 · 相关当机制',
+  layers: [
+    { label: '地基', title: '社会事实与互动', summary: '外在于个人，却塑造个人。', items: [
+      { term: '社会事实', en: 'Social Facts', claim: '有些力量外在于个人，却对个人有约束力。',
+        body: '涂尔干用自杀率证明：即使最私人的行为，也受社会整合与规范调节。社会事实包括法律、道德、集体情感、人口结构。它们不能被还原为个体心理。',
+        caution: '社会事实不等于“社会决定论”；结构与能动性始终在互动。' },
+      { term: '社会建构', en: 'Social Construction', claim: '很多我们视为“自然”的东西，是被互动与制度建构出来的。',
+        body: '伯格与卢克曼描述制度化的过程：反复互动形成类型化，类型化被客观化，再通过社会化被内化。性别角色、种族分类、货币价值，甚至“童年”的概念，都有历史。',
+        caution: '建构论不否认物理现实；它追问的是分类与意义如何形成、谁因此受益。',
+        link: '心智' },
+      { term: '角色与规范', en: 'Roles & Norms', claim: '规范靠内化与制裁维持；越轨不是异常，而是边界的确立。',
+        body: '角色是期待的集合，规范是行为的脚本。制裁可以是正式的（法律），也可以是非正式的（白眼、流言）。越轨行为被惩罚的过程，反而向所有人重申了规范。',
+        caution: '不要把“规范”等同于“正确”；规范可能是压迫性的，也会随权力关系变化。',
+        link: '规范' },
+      { term: '符号互动与拟剧', en: 'Symbolic Interaction & Dramaturgy', claim: '意义在互动中协商，自我在观众面前表演。',
+        body: '戈夫曼的拟剧论：前台表演角色，后台卸下妆扮；印象管理是日常技能。符号互动论强调：人不是对刺激直接反应，而是对符号的意义反应。',
+        caution: '拟剧论容易被误读为“人人虚伪”；它说的是社会互动必然包含呈现与解释。' }
+    ]},
+    { label: '结构', title: '阶层、组织与网络', summary: '看不见的结构，决定可见的机会。', items: [
+      { term: '阶层与流动', en: 'Class & Mobility', claim: '阶层不只是收入，而是资本、惯习与机会结构的组合。',
+        body: '马克思看生产关系，韦伯看阶级、地位与政党，布迪厄看经济资本、文化资本、社会资本与惯习。代际流动率衡量一个社会是否真的“开放”。',
+        caution: '把阶层简化为“穷或富”，会忽略文化资本与社会网络；把成功全归于努力，是结构盲。',
+        link: '制度' },
+      { term: '组织与科层', en: 'Bureaucracy', claim: '科层制用规则换效率，也用规则制造异化。',
+        body: '韦伯：科层制是理性化的典型，分工、层级、文书与非人格化规则提高可预测性。但规则会自我增殖，目标会被手段替代，默顿称之为目标置换。组织逻辑塑造成员的行为与道德感。',
+        caution: '“去科层化”不等于“无组织”；非正式结构同样会产生权力与排斥。',
+        link: '制度' },
+      { term: '网络与社会资本', en: 'Networks & Social Capital', claim: '强关系给支持，弱关系给机会。',
+        body: '格兰诺维特：找工作最有效的信息往往来自弱关系，因为它们连接不同圈子。伯特的结构洞理论：占据信息中介位置的人获得优势。社会资本是信任、互惠与可动员关系的总和。',
+        caution: '社会资本也可能排斥外人、强化不平等；网络不是天然的好东西。',
+        link: '制度' },
+      { term: '文化与品味', en: 'Culture & Taste', claim: '品味不是天生的，而是阶层的标记与再生产机制。',
+        body: '布迪厄《区隔》：从音乐、饮食到说话方式，审美偏好与教育、阶层高度相关。文化资本以“自然”“有教养”的面目出现，从而掩盖了它的社会来源。',
+        caution: '不要把文化分析变成审美相对主义；区分“理解来源”与“放弃判断”。' }
+    ]},
+    { label: '变迁', title: '现代性与行动', summary: '结构如何被再生产，又如何被改变。', items: [
+      { term: '现代性与理性化', en: 'Modernity & Rationalization', claim: '现代性把世界祛魅，也把意义问题留给了个人。',
+        body: '韦伯：目的理性扩张，价值理性退潮，世界从“充满意义”变成“可计算”。齐美尔：货币与都市生活塑造了计算化、冷漠而自由的心理。现代人获得了自由，也承担了无依无靠。',
+        caution: '不要把“传统”浪漫化，也不要把“现代”等同于“进步”；两者都有代价。',
+        link: '理性' },
+      { term: '风险社会', en: 'Risk Society', claim: '现代风险是人造的、全球的、不可保险的。',
+        body: '贝克：风险从自然外部性变成技术与决策的产物，比如核、气候与金融。风险分配不再遵循阶级逻辑，而遵循知识与信息的不对称。专家系统成为信任的对象，也成为争议的焦点。',
+        caution: '“风险”与“危险”不同：风险包含人为决策与可选择性。',
+        link: '因果' },
+      { term: '集体行动', en: 'Collective Action', claim: '运动不是非理性爆发，而是组织、资源与框架的产物。',
+        body: '搭便车问题（奥尔森）说明集体利益不足以解释行动；资源动员理论强调组织与资金；政治机会结构解释行动窗口；框架理论解释意义如何被建构。情绪与不满是燃料，组织与机会是引擎。',
+        caution: '把集体行动简化为“被煽动”或“乌合之众”，会忽略其理性与组织性。',
+        link: '制度' },
+      { term: '制度与变迁', en: 'Institutions & Change', claim: '社会不是机器，而是路径依赖的复杂适应系统。',
+        body: '制度变迁受路径依赖、权力关系与意外后果影响；制度同构让组织趋同，分为强制、模仿与规范三种机制。渐进式变迁往往比革命更常见，也更难被看见。',
+        caution: '设计制度时高估意图、低估反馈，是最常见的乌托邦错误。',
+        link: '制度' }
+    ]}
+  ],
+  interfaces: [
+    { to: 'economics', note: '制度、交易成本与集体行动' },
+    { to: 'psychology', note: '社会认知与从众的微观基础' },
+    { to: 'philosophy', note: '规范秩序需要正当性论证' }
+  ],
+  errors: [
+    '把结构问题归结为个人不努力',
+    '把统计相关直接当作社会机制',
+    '把“社会建构”误读为“纯属虚构”',
+    '忽视研究者的反身性位置'
+  ]
+}
+];
+
+const BRIDGES = [
+  { id: 'rationality', name: '理性', en: 'Rationality', a: 'logic', b: 'economics', domains: ['logic','economics','philosophy','psychology','sociology'],
+    def: '理性不是“聪明”，而是手段与目的之间可检验的一致性。',
+    insight: '逻辑学给出理性的形式标准，经济学给出理性的选择模型，心理学揭示它的边界，哲学追问它是否值得崇拜，社会学展示理性化如何变成铁笼。' },
+  { id: 'incentive', name: '激励', en: 'Incentive', a: 'economics', b: 'psychology', domains: ['economics','psychology','sociology','philosophy'],
+    def: '激励是改变行为代价与收益的任何安排，显性的叫价格，隐性的叫规范。',
+    insight: '外在奖励可能挤出内在动机；认可、自主与归属本身就是激励。制度设计的问题，往往是激励兼容的问题。' },
+  { id: 'causality', name: '因果', en: 'Causality', a: 'logic', b: 'philosophy', domains: ['logic','philosophy','economics','psychology','sociology'],
+    def: '因果不是“先后发生”，而是“若改变原因，结果会不同”。',
+    insight: '逻辑区分必要与充分条件，哲学争论因果是实在还是习惯，经济学用它做识别，心理学研究人如何错误归因，社会学寻找机制。' },
+  { id: 'institution', name: '制度', en: 'Institution', a: 'economics', b: 'sociology', domains: ['economics','sociology','philosophy','psychology'],
+    def: '制度是被人群重复执行、并因此稳定下来的规则与预期。',
+    insight: '经济学看它如何降低交易成本，社会学看它如何塑造身份与权力，哲学问它是否正当，心理学解释人为什么遵守。' },
+  { id: 'norms', name: '规范', en: 'Norms', a: 'philosophy', b: 'sociology', domains: ['philosophy','sociology','psychology','economics'],
+    def: '规范是“应该怎样”的集体预期，靠内化与制裁维持。',
+    insight: '哲学问规范的正当性来源，社会学看规范如何生产与执行，心理学解释从众与内化，经济学把规范当作非正式制度。' },
+  { id: 'mind', name: '心智', en: 'Mind', a: 'philosophy', b: 'psychology', domains: ['philosophy','psychology','logic','sociology'],
+    def: '心智是意义、情绪与推理的发生地，也是所有社会现象的最后接口。',
+    insight: '哲学追问意识与自我，心理学描述机制与偏差，逻辑学研究推理形式，经济学假设偏好，社会学考察心智如何被处境塑造。' }
+];
+
+const STEPS = [
+  { num: '01', domain: 'economics', q: '谁在权衡什么？', note: '找到行动者、约束、代价与激励。先别问“应该怎样”，先看“他们面对什么”。' },
+  { num: '02', domain: 'logic', q: '这个结论凭什么成立？', note: '重建论证，检查前提与推理形式。分清哪些是事实，哪些是解释，哪些只是态度。' },
+  { num: '03', domain: 'philosophy', q: '哪些前提值得怀疑？', note: '澄清概念，追问价值与正当性。很多分歧不是事实之争，而是定义与优先级之争。' },
+  { num: '04', domain: 'psychology', q: '人为什么会这样判断？', note: '识别偏差、情绪与动机。包括你自己的：你希望结论是什么？' },
+  { num: '05', domain: 'sociology', q: '什么结构让人不得不如此？', note: '看规范、制度与资源分配。把“个人选择”放回它发生的处境里。' }
+];
+
+const READINGS = [
+  { time: '10 MIN', title: '俯瞰', note: '先读《一页纸总览》与《六条暗线》，建立坐标系。不急着记细节，先知道每副眼镜能看见什么。' },
+  { time: '1 HOUR', title: '穿行', note: '逐域读 12 条要义，每域挑两条最陌生的展开。在页边写下自己的反例，比划线更有用。' },
+  { time: 'LONG TERM', title: '练习', note: '每周选一个真实事件，用五问法各写三句话。三个月后回看，修正的不是知识，而是你的默认判断。' }
+];
+
+const MARQUEE_TERMS = ['稀缺','机会成本','边际','激励','均衡','比较优势','外部性','信息不对称','交易成本','生产率','纳什均衡','有效性','贝叶斯','因果','反例','归纳','谬误','概念分析','思想实验','无知之幕','义务论','德性','双系统','认知偏差','记忆重建','从众','群体极化','社会事实','惯习','文化资本','弱关系','风险社会','路径依赖'];
+
+const DOMAIN_MAP = {};
+DOMAINS.forEach((d) => {
+  DOMAIN_MAP[d.id] = d;
+  let n = 0;
+  d.layers.forEach((l, li) => {
+    l.items.forEach((it) => {
+      n += 1;
+      it._key = d.id + '-' + li + '-' + n;
+      it._id = 'item-' + it._key;
+      it._num = d.index + '.' + String(n).padStart(2, '0');
+      it._domain = d;
+      it._layer = l;
+    });
+  });
+});
+const FLAT_ITEMS = DOMAINS.reduce((acc, d) => acc.concat(d.layers.reduce((a, l) => a.concat(l.items), [])), []);
+let booted = false;
+let flashTimer = 0;
+
+function boot() {
+  if (booted || !window.Vue) return;
+  booted = true;
+  const { createApp, ref, computed, nextTick, onMounted, onBeforeUnmount, watch } = Vue;
+
+  createApp({
+    setup() {
+      const open = ref({});
+      const flashKey = ref('');
+      const searchOpen = ref(false);
+      const menuOpen = ref(false);
+      const query = ref('');
+      const sel = ref(0);
+      const searchInput = ref(null);
+      const scrolled = ref(false);
+      const progress = ref(0);
+      const active = ref('');
+      const romans = ['Ⅰ', 'Ⅱ', 'Ⅲ'];
+      const bridgeNumerals = ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ'];
+      const hints = ['机会成本', '基础比率', '惯习', '无知之幕', '外部性', '双系统'];
+
+      const results = computed(() => {
+        const q = query.value.trim().toLowerCase();
+        if (!q) return [];
+        return FLAT_ITEMS.filter((it) =>
+          it.term.toLowerCase().includes(q) ||
+          it.en.toLowerCase().includes(q) ||
+          it.claim.toLowerCase().includes(q) ||
+          it.body.toLowerCase().includes(q) ||
+          it._domain.name.includes(q) ||
+          it._layer.label.includes(q)
+        ).slice(0, 12);
+      });
+
+      const dom = (id) => DOMAIN_MAP[id] || { name: id, color: '#c9a46a', verb: '' };
+
+      function scrollTo(id) {
+        if (id === 'top') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function toggle(key) {
+        open.value[key] = !open.value[key];
+      }
+      function isLayerOpen(d, li) {
+        return d.layers[li].items.every((it) => !!open.value[it._key]);
+      }
+      function toggleLayer(d, li) {
+        const next = !isLayerOpen(d, li);
+        d.layers[li].items.forEach((it) => { open.value[it._key] = next; });
+      }
+      function isDomainOpen(d) {
+        return d.layers.every((l, li) => isLayerOpen(d, li));
+      }
+      function toggleDomain(d) {
+        const next = !isDomainOpen(d);
+        d.layers.forEach((l) => { l.items.forEach((it) => { open.value[it._key] = next; }); });
+      }
+
+      function openSearch() {
+        searchOpen.value = true;
+        sel.value = 0;
+      }
+      function closeSearch() {
+        searchOpen.value = false;
+      }
+      function menuGo(id) {
+        menuOpen.value = false;
+        scrollTo(id);
+      }
+      function moveSel(dir) {
+        const len = results.value.length;
+        if (!len) return;
+        sel.value = (sel.value + dir + len) % len;
+      }
+      function focusItem(key) {
+        const it = FLAT_ITEMS.find((x) => x._key === key);
+        if (!it) return;
+        open.value[key] = true;
+        flashKey.value = key;
+        window.clearTimeout(flashTimer);
+        flashTimer = window.setTimeout(() => {
+          if (flashKey.value === key) flashKey.value = '';
+        }, 2400);
+        nextTick(() => {
+          setTimeout(() => {
+            const el = document.getElementById(it._id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 60);
+        });
+      }
+      function goResult(r) {
+        const key = r._key;
+        closeSearch();
+        focusItem(key);
+      }
+
+      watch(searchOpen, async (isOpen) => {
+        document.documentElement.style.overflow = isOpen || menuOpen.value ? 'hidden' : '';
+        if (isOpen) {
+          await nextTick();
+          if (searchInput.value) searchInput.value.focus();
+        } else {
+          query.value = '';
+          sel.value = 0;
+        }
+      });
+      watch(menuOpen, (isOpen) => {
+        document.documentElement.style.overflow = isOpen || searchOpen.value ? 'hidden' : '';
+      });
+      watch(query, () => { sel.value = 0; });
+
+      let ticking = false;
+      function updateScroll() {
+        const y = window.scrollY;
+        scrolled.value = y > 18;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        progress.value = max > 0 ? Math.min(100, (y / max) * 100) : 0;
+        const ids = ['economics', 'logic', 'philosophy', 'psychology', 'sociology', 'bridges', 'overview', 'method'];
+        let current = '';
+        ids.forEach((id) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const rect = el.getBoundingClientRect();
+          if (rect.height > 0 && rect.top <= 150) current = id;
+        });
+        active.value = current;
+        ticking = false;
+      }
+      function onScroll() {
+        if (!ticking) {
+          ticking = true;
+          window.requestAnimationFrame(updateScroll);
+        }
+      }
+      function onKey(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          if (searchOpen.value) closeSearch(); else openSearch();
+          return;
+        }
+        if (e.key === 'Escape' && searchOpen.value) { closeSearch(); return; }
+        if (e.key === 'Escape' && menuOpen.value) { menuOpen.value = false; return; }
+        if (!searchOpen.value) return;
+        if (e.key === 'ArrowDown') { e.preventDefault(); moveSel(1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); moveSel(-1); }
+        else if (e.key === 'Enter' && results.value[sel.value]) { e.preventDefault(); goResult(results.value[sel.value]); }
+      }
+
+      let revealObserver = null;
+      let atlasCleanup = null;
+
+      onMounted(() => {
+        window.requestAnimationFrame(updateScroll);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('keydown', onKey);
+
+        if ('IntersectionObserver' in window) {
+          revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                revealObserver.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+          document.querySelectorAll('[data-reveal]').forEach((el) => revealObserver.observe(el));
+        } else {
+          document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-in'));
+        }
+
+        if (typeof initAtlas === 'function') {
+          atlasCleanup = initAtlas(document.getElementById('atlas-canvas'), DOMAINS, BRIDGES, {
+            onDomain: (id) => scrollTo(id),
+            onItem: (key) => focusItem(key)
+          });
+        }
+      });
+
+      onBeforeUnmount(() => {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('keydown', onKey);
+        if (revealObserver) revealObserver.disconnect();
+        if (atlasCleanup) atlasCleanup();
+      });
+
+      return {
+        domains: DOMAINS, bridges: BRIDGES, steps: STEPS, readings: READINGS, marqueeTerms: MARQUEE_TERMS,
+        romans, bridgeNumerals, hints,
+        open, flashKey, searchOpen, menuOpen, query, sel, searchInput, scrolled, progress, active, results,
+        dom, scrollTo, toggle, isLayerOpen, toggleLayer, isDomainOpen, toggleDomain,
+        openSearch, closeSearch, menuGo, moveSel, focusItem, goResult
+      };
+    }
+  }).mount('#app');
+}
+
+function initAtlas(canvas, domains, bridges, callbacks) {
+  if (!canvas) return null;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  const TAU = Math.PI * 2;
+  const R = 300;
+  const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let reduce = reduceMQ.matches;
+  let W = 1, H = 1, DPR = 1, G = 1;
+  let stars = [];
+  let raf = null;
+  let running = false;
+  let last = performance.now();
+
+  const view = {
+    ry: -0.78, rx: 0.3, vy: 0, dragging: false, moved: 0, lastX: 0, lastY: 0,
+    idle: 0, hover: null, visible: true
+  };
+
+  const rgba = (hex, a) => {
+    const v = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((v >> 16) & 255) + ',' + ((v >> 8) & 255) + ',' + (v & 255) + ',' + a + ')';
+  };
+  const rgb = (hex) => {
+    const v = parseInt(hex.replace('#', ''), 16);
+    return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+  };
+  const mix = (a, b, t) => [
+    Math.round(a[0] + (b[0] - a[0]) * t),
+    Math.round(a[1] + (b[1] - a[1]) * t),
+    Math.round(a[2] + (b[2] - a[2]) * t)
+  ];
+  const depthAlpha = (z) => Math.max(0.16, Math.min(1, 0.9 - (z + 260) / 760));
+
+  const hubs = domains.map((d, i) => {
+    const a = (i / domains.length) * TAU - Math.PI / 2;
+    return { d, i, p: { x: Math.cos(a) * R, y: i % 2 ? 42 : -26, z: Math.sin(a) * R } };
+  });
+  const hubById = {};
+  hubs.forEach((h) => { hubById[h.d.id] = h; });
+
+  const sats = [];
+  hubs.forEach((h) => {
+    const items = [];
+    h.d.layers.forEach((l) => l.items.forEach((it) => items.push({ it, layer: l.label })));
+    const total = items.length;
+    items.forEach((entry, j) => {
+      const ga = j * 2.399963229728653;
+      const gy = 1 - (2 * (j + 0.5)) / total;
+      const gr = Math.sqrt(Math.max(0, 1 - gy * gy));
+      const rr = 88;
+      sats.push({
+        p: { x: h.p.x + Math.cos(ga) * gr * rr, y: h.p.y + gy * rr * 0.72, z: h.p.z + Math.sin(ga) * gr * rr },
+        hub: h, it: entry.it, layer: entry.layer
+      });
+    });
+  });
+
+  const quad = (p0, c, p2, t) => {
+    const u = 1 - t;
+    return {
+      x: u * u * p0.x + 2 * u * t * c.x + t * t * p2.x,
+      y: u * u * p0.y + 2 * u * t * c.y + t * t * p2.y,
+      z: u * u * p0.z + 2 * u * t * c.z + t * t * p2.z
+    };
+  };
+  const arcs = bridges.map((b) => {
+    const A = hubById[b.a], B = hubById[b.b];
+    if (!A || !B) return null;
+    const p0 = A.p, p2 = B.p;
+    const mid = { x: (p0.x + p2.x) / 2, y: (p0.y + p2.y) / 2, z: (p0.z + p2.z) / 2 };
+    const rad = Math.hypot(mid.x, mid.z) || 1;
+    const ctrl = { x: mid.x + (mid.x / rad) * 86, y: mid.y + 118, z: mid.z + (mid.z / rad) * 86 };
+    const pts = [];
+    for (let i = 0; i <= 44; i += 1) pts.push(quad(p0, ctrl, p2, i / 44));
+    return { b, pts, mid: pts[22], c1: rgb(A.d.color), c2: rgb(B.d.color) };
+  }).filter(Boolean);
+
+  function project(p) {
+    const cy = Math.cos(view.ry), sy = Math.sin(view.ry);
+    const cx = Math.cos(view.rx), sx = Math.sin(view.rx);
+    const x1 = p.x * cy - p.z * sy;
+    const z1 = p.x * sy + p.z * cy;
+    const y1 = p.y * cx - z1 * sx;
+    const z2 = p.y * sx + z1 * cx;
+    const s = 1100 / (1100 + z2);
+    return { x: W / 2 + x1 * s * G, y: H / 2 + y1 * s * G, s, z: z2 };
+  }
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    W = Math.max(1, rect.width);
+    H = Math.max(1, rect.height);
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    G = Math.min(W / 900, H / 760);
+    stars = [];
+    const count = Math.round((W * H) / 11000);
+    for (let i = 0; i < count; i += 1) {
+      stars.push({
+        x: Math.random() * W, y: Math.random() * H,
+        r: Math.random() * 1.1 + 0.2,
+        a: Math.random() * 0.38 + 0.1,
+        ph: Math.random() * TAU,
+        sp: 0.4 + Math.random() * 0.9
+      });
+    }
+    if (reduce) render(performance.now());
+  }
+
+  function render(now) {
+    ctx.clearRect(0, 0, W, H);
+
+    for (let i = 0; i < stars.length; i += 1) {
+      const st = stars[i];
+      const tw = reduce ? 1 : 0.55 + 0.45 * Math.sin(now * 0.0009 * st.sp + st.ph);
+      ctx.fillStyle = 'rgba(232,226,212,' + (st.a * tw).toFixed(3) + ')';
+      ctx.beginPath();
+      ctx.arc(st.x, st.y, st.r, 0, TAU);
+      ctx.fill();
+    }
+
+    ctx.setLineDash([2, 7]);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(201,164,106,.10)';
+    ctx.beginPath();
+    hubs.forEach((h, i) => {
+      const p = project(h.p);
+      if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+    });
+    ctx.closePath();
+    ctx.stroke();
+
+    const coreP = project({ x: 0, y: 0, z: 0 });
+    hubs.forEach((h) => {
+      const p = project(h.p);
+      ctx.strokeStyle = 'rgba(236,230,216,.045)';
+      ctx.beginPath();
+      ctx.moveTo(coreP.x, coreP.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+
+    arcs.forEach((arc) => {
+      const pts = arc.pts.map(project);
+      ctx.lineWidth = 7;
+      ctx.strokeStyle = 'rgba(201,164,106,.045)';
+      ctx.beginPath();
+      pts.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+      ctx.stroke();
+      for (let i = 1; i < pts.length; i += 1) {
+        const z = (pts[i].z + pts[i - 1].z) / 2;
+        const t = i / (pts.length - 1);
+        const c = mix(arc.c1, arc.c2, t);
+        ctx.strokeStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (depthAlpha(z) * 0.5).toFixed(3) + ')';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
+        ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.stroke();
+      }
+      const mp = project(arc.mid);
+      ctx.textAlign = 'center';
+      ctx.font = '10px "PingFang SC","Microsoft YaHei",sans-serif';
+      ctx.fillStyle = 'rgba(232,222,203,' + (depthAlpha(mp.z) * 0.42).toFixed(3) + ')';
+      ctx.fillText(arc.b.name.split('').join(' '), mp.x, mp.y - 7);
+    });
+
+    const cr = 46 * coreP.s * Math.max(0.7, G * 1.25);
+    const cg = ctx.createRadialGradient(coreP.x, coreP.y, 0, coreP.x, coreP.y, cr);
+    cg.addColorStop(0, 'rgba(240,216,172,.5)');
+    cg.addColorStop(0.35, 'rgba(220,190,145,.16)');
+    cg.addColorStop(1, 'rgba(220,190,145,0)');
+    ctx.fillStyle = cg;
+    ctx.beginPath();
+    ctx.arc(coreP.x, coreP.y, cr, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,242,214,.9)';
+    ctx.beginPath();
+    ctx.arc(coreP.x, coreP.y, 2.1, 0, TAU);
+    ctx.fill();
+    ctx.font = '8px "PingFang SC","Microsoft YaHei",sans-serif';
+    ctx.fillStyle = 'rgba(236,230,216,.26)';
+    ctx.fillText('人 的 行 动', coreP.x, coreP.y + 32);
+
+    ctx.lineWidth = 0.6;
+    sats.forEach((s) => {
+      const p = project(s.p);
+      const hp = project(s.hub.p);
+      ctx.strokeStyle = 'rgba(236,230,216,' + (depthAlpha((p.z + hp.z) / 2) * 0.09).toFixed(3) + ')';
+      ctx.beginPath();
+      ctx.moveTo(hp.x, hp.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    });
+    ctx.globalCompositeOperation = 'lighter';
+    sats.forEach((s) => {
+      const p = project(s.p);
+      const a = depthAlpha(p.z);
+      const hovered = view.hover && view.hover.kind === 'sat' && view.hover.s === s;
+      ctx.fillStyle = rgba(s.hub.d.color, a * 0.12);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(4, (hovered ? 10 : 6) * p.s), 0, TAU);
+      ctx.fill();
+      ctx.fillStyle = rgba(s.hub.d.color, a * 0.9);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, Math.max(1.1, (hovered ? 2.8 : 1.6) * p.s), 0, TAU);
+      ctx.fill();
+    });
+
+    const hubPts = hubs.map((h) => ({ h, p: project(h.p) })).sort((a, b) => a.p.z - b.p.z);
+    hubPts.forEach(({ h, p }) => {
+      const a = depthAlpha(p.z);
+      const k = p.s * Math.max(0.75, G * 1.5);
+      const hovered = view.hover && view.hover.kind === 'hub' && view.hover.h === h;
+      const gr = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 48 * k);
+      gr.addColorStop(0, rgba(h.d.color, (hovered ? 0.5 : 0.32) * a));
+      gr.addColorStop(0.42, rgba(h.d.color, 0.1 * a));
+      gr.addColorStop(1, rgba(h.d.color, 0));
+      ctx.fillStyle = gr;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 48 * k, 0, TAU);
+      ctx.fill();
+      ctx.lineWidth = hovered ? 2 : 1.2;
+      ctx.strokeStyle = rgba(h.d.color, (hovered ? 0.95 : 0.62) * a);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 13 * k, 0, TAU);
+      ctx.stroke();
+      if (!reduce) {
+        ctx.lineWidth = 0.8;
+        ctx.strokeStyle = rgba(h.d.color, 0.16 * a);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, (17 + Math.sin(now / 800 + h.i) * 3) * k, 0, TAU);
+        ctx.stroke();
+      }
+      ctx.fillStyle = 'rgba(248,240,224,' + (0.9 * a).toFixed(3) + ')';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3 * k, 0, TAU);
+      ctx.fill();
+    });
+    ctx.globalCompositeOperation = 'source-over';
+
+    const compact = W < 560;
+    hubPts.forEach(({ h, p }) => {
+      const a = 0.58 + 0.42 * depthAlpha(p.z);
+      const hovered = view.hover && view.hover.kind === 'hub' && view.hover.h === h;
+      const dxl = p.x - W / 2;
+      const dyl = p.y - H / 2;
+      const dl = Math.hypot(dxl, dyl) || 1;
+      const ux = dxl / dl;
+      const uy = dyl / dl;
+      const anchor = compact ? 30 : 42;
+      const ax = p.x + ux * anchor;
+      const ay = p.y + uy * anchor;
+      ctx.shadowColor = 'rgba(0,0,0,.92)';
+      ctx.shadowBlur = 9;
+      ctx.font = (hovered ? '600 ' : '500 ') + (compact ? 12 : 15) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+      const nameW = ctx.measureText(h.d.name).width;
+      if (ux < -0.3) {
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'rgba(242,236,224,' + a.toFixed(3) + ')';
+        ctx.fillText(h.d.name, Math.max(nameW + 4, ax), ay - (compact ? 2 : 6));
+      } else if (ux > 0.3) {
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'rgba(242,236,224,' + a.toFixed(3) + ')';
+        ctx.fillText(h.d.name, Math.min(ax, W - nameW - 4), ay - (compact ? 2 : 6));
+      } else {
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(242,236,224,' + a.toFixed(3) + ')';
+        ctx.fillText(h.d.name, ax, ay - (compact ? 2 : 6));
+      }
+      if (!compact) {
+        ctx.font = '9px "PingFang SC","Microsoft YaHei",sans-serif';
+        ctx.fillStyle = rgba(h.d.color, a * 0.92);
+        ctx.fillText(h.d.verb.split('').join(' '), ax, ay + 10);
+      }
+      ctx.shadowBlur = 0;
+    });
+  }
+
+  function nodeAt(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = clientX - rect.left;
+    const my = clientY - rect.top;
+    let best = null;
+    let bestD = Infinity;
+    hubs.forEach((h) => {
+      const p = project(h.p);
+      const d = Math.hypot(p.x - mx, p.y - my);
+      if (d < 32 && d < bestD) { bestD = d; best = { kind: 'hub', h }; }
+    });
+    if (!best) {
+      sats.forEach((s) => {
+        const p = project(s.p);
+        const d = Math.hypot(p.x - mx, p.y - my);
+        if (d < 11 && d < bestD) { bestD = d; best = { kind: 'sat', s }; }
+      });
+    }
+    return best;
+  }
+
+  const tip = document.getElementById('atlasTip');
+  function showTip(node, clientX, clientY) {
+    if (!tip) return;
+    if (!node) { tip.classList.remove('show'); return; }
+    const rect = canvas.getBoundingClientRect();
+    tip.style.left = (clientX - rect.left) + 'px';
+    tip.style.top = (clientY - rect.top) + 'px';
+    if (node.kind === 'hub') {
+      tip.innerHTML = '<span class="tip-domain" style="color:' + node.h.d.color + '">' + node.h.d.en +
+        '</span><strong>' + node.h.d.name + '</strong><em>' + node.h.d.verb + ' · 点击进入</em>';
+    } else {
+      tip.innerHTML = '<span class="tip-domain" style="color:' + node.s.hub.d.color + '">' +
+        node.s.hub.d.name + ' · ' + node.s.layer + '</span><strong>' + node.s.it.term +
+        '</strong><em>点击阅读该要义</em>';
+    }
+    tip.classList.add('show');
+  }
+
+  function onDown(e) {
+    view.dragging = true;
+    view.moved = 0;
+    view.lastX = e.clientX;
+    view.lastY = e.clientY;
+    view.vy = 0;
+    view.idle = 0;
+    if (canvas.setPointerCapture) {
+      try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    }
+    canvas.style.cursor = 'grabbing';
+    if (tip) tip.classList.remove('show');
+  }
+
+  function onMove(e) {
+    if (view.dragging) {
+      const dx = e.clientX - view.lastX;
+      const dy = e.clientY - view.lastY;
+      view.lastX = e.clientX;
+      view.lastY = e.clientY;
+      view.moved += Math.abs(dx) + Math.abs(dy);
+      view.ry += dx * 0.0055;
+      view.rx = Math.max(-0.55, Math.min(0.55, view.rx + dy * 0.004));
+      view.vy = Math.max(-0.0012, Math.min(0.0012, dx * 0.00005));
+      if (reduce) render(performance.now());
+      return;
+    }
+    const node = nodeAt(e.clientX, e.clientY);
+    view.hover = node;
+    canvas.style.cursor = node ? 'pointer' : 'grab';
+    showTip(node, e.clientX, e.clientY);
+    if (reduce) render(performance.now());
+  }
+
+  function onUp(e) {
+    if (!view.dragging) return;
+    view.dragging = false;
+    view.idle = 0;
+    canvas.style.cursor = 'grab';
+    if (canvas.releasePointerCapture) {
+      try { canvas.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    }
+    if (view.moved < 8) {
+      const node = nodeAt(e.clientX, e.clientY);
+      if (node) {
+        if (node.kind === 'hub') callbacks.onDomain(node.h.d.id);
+        else callbacks.onItem(node.s.it._key);
+      }
+    }
+  }
+
+  function onLeave() {
+    view.dragging = false;
+    view.hover = null;
+    canvas.style.cursor = 'grab';
+    if (tip) tip.classList.remove('show');
+    if (reduce) render(performance.now());
+  }
+
+  function onKey(e) {
+    const step = 0.14;
+    if (e.key === 'ArrowLeft') { view.ry -= step; e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { view.ry += step; e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { view.rx = Math.max(-0.55, view.rx - 0.09); e.preventDefault(); }
+    else if (e.key === 'ArrowDown') { view.rx = Math.min(0.55, view.rx + 0.09); e.preventDefault(); }
+    else if (/^[1-5]$/.test(e.key) && domains[Number(e.key) - 1]) { callbacks.onDomain(domains[Number(e.key) - 1].id); return; }
+    else return;
+    if (reduce) render(performance.now());
+  }
+
+  function frame(now) {
+    if (!view.visible) { running = false; raf = null; return; }
+    const dt = Math.min(50, now - last);
+    last = now;
+    if (!view.dragging) {
+      view.idle += dt;
+      if (view.idle > 1200) {
+        view.ry += 0.00008 * dt;
+        view.vy *= Math.pow(0.9, dt / 16.7);
+      } else if (Math.abs(view.vy) > 0.000001) {
+        view.ry += view.vy * dt;
+        view.vy *= Math.pow(0.95, dt / 16.7);
+      }
+    }
+    render(now);
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (reduce) { render(performance.now()); return; }
+    if (!running) {
+      running = true;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    }
+  }
+
+  function stop() {
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = null;
+  }
+
+  const visObserver = new IntersectionObserver((entries) => {
+    view.visible = entries[0].isIntersecting;
+    if (view.visible) start(); else stop();
+  }, { threshold: 0.02 });
+  visObserver.observe(canvas);
+
+  const ro = new ResizeObserver(() => { resize(); });
+  ro.observe(canvas);
+
+  const onReduceChange = (e) => {
+    reduce = e.matches;
+    if (reduce) { stop(); render(performance.now()); } else { start(); }
+  };
+  if (reduceMQ.addEventListener) reduceMQ.addEventListener('change', onReduceChange);
+  else if (reduceMQ.addListener) reduceMQ.addListener(onReduceChange);
+
+  canvas.addEventListener('pointerdown', onDown);
+  canvas.addEventListener('pointermove', onMove);
+  canvas.addEventListener('pointerup', onUp);
+  canvas.addEventListener('pointercancel', onLeave);
+  canvas.addEventListener('pointerleave', onLeave);
+  canvas.addEventListener('keydown', onKey);
+
+  resize();
+  start();
+
+  return function cleanup() {
+    stop();
+    visObserver.disconnect();
+    ro.disconnect();
+    if (reduceMQ.removeEventListener) reduceMQ.removeEventListener('change', onReduceChange);
+    else if (reduceMQ.removeListener) reduceMQ.removeListener(onReduceChange);
+    canvas.removeEventListener('pointerdown', onDown);
+    canvas.removeEventListener('pointermove', onMove);
+    canvas.removeEventListener('pointerup', onUp);
+    canvas.removeEventListener('pointercancel', onLeave);
+    canvas.removeEventListener('pointerleave', onLeave);
+    canvas.removeEventListener('keydown', onKey);
+  };
+}
+
+if (window.Vue) {
+  boot();
+} else {
+  const fallback = document.createElement('script');
+  fallback.src = 'https://unpkg.com/vue@3/dist/vue.global.prod.js';
+  fallback.onload = boot;
+  fallback.onerror = function () {
+    const app = document.getElementById('app');
+    if (app) {
+      app.removeAttribute('v-cloak');
+      app.innerHTML = '<div class="boot-error">界面框架加载失败。请检查网络连接后刷新页面。</div>';
+    }
+  };
+  document.head.appendChild(fallback);
+}
+</script>
+</body>
+</html>
