@@ -39,6 +39,7 @@ body::after{
   content:"";position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:.03;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
+#star-chain{position:fixed;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none;opacity:.9}
 ::selection{background:rgba(201,164,106,.28);color:#fff}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -466,6 +467,7 @@ kbd{font-family:var(--mono)}
 </style>
 </head>
 <body>
+<canvas id="star-chain" aria-hidden="true"></canvas>
 <div id="app" v-cloak>
 <div class="progress" :style="{width: progress + '%'}"></div>
 <header class="nav" :class="{solid: scrolled}">
@@ -1872,6 +1874,415 @@ function initAtlas(canvas, domains, bridges, callbacks) {
     canvas.removeEventListener('keydown', onKey);
   };
 }
+
+/* ---- 星辰链背景 ---- */
+(function initStarChain() {
+  const canvas = document.getElementById('star-chain');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  const TAU = Math.PI * 2;
+  const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let reduce = reduceMQ.matches;
+  let W = 1, H = 1, DPR = 1;
+  let t = 0, raf = null, running = false, last = 0, resizeTimer = null;
+  let chains = [];
+  const dust = [];
+  const pointer = { x: 0, y: 0, cx: 0, cy: 0 };
+
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  const PALETTES = [
+    { rgb: [231, 201, 148], w: 0.56 },
+    { rgb: [201, 164, 106], w: 0.26 },
+    { rgb: [127, 190, 210], w: 0.12 },
+    { rgb: [166, 150, 222], w: 0.06 }
+  ];
+  const pickPalette = () => {
+    let r = Math.random();
+    for (let i = 0; i < PALETTES.length; i += 1) {
+      r -= PALETTES[i].w;
+      if (r <= 0) return PALETTES[i].rgb;
+    }
+    return PALETTES[0].rgb;
+  };
+
+  const sprites = {};
+  const getSprite = (rgb) => {
+    const key = rgb.join(',');
+    if (sprites[key]) return sprites[key];
+    const size = 64;
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    const g = c.getContext('2d');
+    const grd = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    grd.addColorStop(0, 'rgba(' + key + ',1)');
+    grd.addColorStop(0.16, 'rgba(' + key + ',.62)');
+    grd.addColorStop(0.44, 'rgba(' + key + ',.16)');
+    grd.addColorStop(1, 'rgba(' + key + ',0)');
+    g.fillStyle = grd;
+    g.fillRect(0, 0, size, size);
+    sprites[key] = c;
+    return c;
+  };
+
+  function build() {
+    chains = [];
+    dust.length = 0;
+
+    const chainCount = Math.round(Math.min(12, Math.max(5, W / 200)));
+
+    // 最佳候选采样：让星链锚点尽量均匀铺开，避免扎堆与大片空白
+    const spots = [];
+    const aspect = W / Math.max(1, H);
+    for (let i = 0; i < chainCount; i += 1) {
+      let best = { nx: rand(0.1, 0.9), ny: rand(0.12, 0.88) };
+      let bestDist = -1;
+      for (let k = 0; k < 14; k += 1) {
+        const nx = rand(0.1, 0.9);
+        const ny = rand(0.12, 0.88);
+        let d = 2;
+        spots.forEach((p) => {
+          const dx = (nx - p.nx) * aspect;
+          const dy = ny - p.ny;
+          d = Math.min(d, dx * dx + dy * dy);
+        });
+        if (d > bestDist) { bestDist = d; best = { nx, ny }; }
+      }
+      spots.push(best);
+    }
+
+    for (let i = 0; i < chainCount; i += 1) {
+      // 以“随机生长树 + 邻近补边”构成星座网，而不是一条单向折线
+      const count = Math.round(rand(6, 8.4));
+      const nodes = [{ x: 0, y: 0, parent: -1 }];
+      const edges = [];
+      const edgeKeys = {};
+      for (let j = 1; j < count; j += 1) {
+        const parent = (Math.random() * nodes.length) | 0;
+        const ang = rand(0, TAU);
+        const len = rand(32, 64);
+        const from = nodes[parent];
+        nodes.push({ x: from.x + Math.cos(ang) * len, y: from.y + Math.sin(ang) * len, parent });
+        edges.push([parent, j]);
+        edgeKeys[parent + '-' + j] = true;
+      }
+      // 邻近节点补边，但限制每颗星最多 3 条连线，保持疏朗的星座网而非密网
+      const degree = nodes.map(() => 0);
+      edges.forEach((e) => { degree[e[0]] += 1; degree[e[1]] += 1; });
+      const cand = [];
+      for (let a = 0; a < count; a += 1) {
+        for (let b = a + 1; b < count; b += 1) {
+          if (edgeKeys[a + '-' + b]) continue;
+          const dx = nodes[a].x - nodes[b].x;
+          const dy = nodes[a].y - nodes[b].y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 > 8600) continue;
+          cand.push({ a, b, d2 });
+        }
+      }
+      cand.sort((u, v) => u.d2 - v.d2);
+      cand.forEach(({ a, b }) => {
+        if (degree[a] >= 3 || degree[b] >= 3) return;
+        edges.push([a, b]);
+        edgeKeys[a + '-' + b] = true;
+        degree[a] += 1;
+        degree[b] += 1;
+      });
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      nodes.forEach((p) => {
+        minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+        minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+      });
+      const offX = (minX + maxX) / 2, offY = (minY + maxY) / 2;
+      nodes.forEach((p) => {
+        p.x -= offX; p.y -= offY;
+        p.r = rand(0.7, 1.4);
+        p.ph = rand(0, TAU);
+      });
+      nodes[(Math.random() * count) | 0].r = rand(1.8, 2.5);
+
+      // 主脉：根到最深叶的一条路径，流光沿它穿行
+      const depth = nodes.map(() => 0);
+      let leaf = 0;
+      nodes.forEach((p, idx) => {
+        if (p.parent >= 0) depth[idx] = depth[p.parent] + 1;
+        if (depth[idx] > depth[leaf]) leaf = idx;
+      });
+      const spine = [];
+      for (let idx = leaf; idx >= 0; idx = nodes[idx].parent) spine.push(idx);
+      spine.reverse();
+
+      const color = pickPalette();
+      chains.push({
+        nodes, edges, spine, links: [], color, sprite: getSprite(color),
+        nx: spots[i].nx, ny: spots[i].ny,
+        rot: rand(0, TAU), vr: rand(-0.018, 0.018),
+        ax: rand(14, 44), ay: rand(10, 36),
+        sx: rand(0.035, 0.075), sy: rand(0.03, 0.07),
+        ph: rand(0, TAU), ph2: rand(0, TAU),
+        par: rand(0.5, 1.4), tw: rand(0.5, 1.1),
+        pulse: rand(0, Math.max(0.5, spine.length - 1)), pv: rand(0.22, 0.5)
+      });
+    }
+
+    // 相邻星链之间各拉两根星线，形成带环路的星座网
+    const linkPairs = {};
+    const scale0 = Math.min(1.2, Math.max(0.55, W / 1400));
+    chains.forEach((ch, i) => {
+      const near = chains
+        .map((other, j) => {
+          const dx = (ch.nx - other.nx) * aspect;
+          const dy = ch.ny - other.ny;
+          return { j, d: dx * dx + dy * dy };
+        })
+        .filter((n) => n.j !== i)
+        .sort((u, v) => u.d - v.d)
+        .slice(0, 2);
+      near.forEach(({ j }) => {
+        const key = i < j ? i + '-' + j : j + '-' + i;
+        if (linkPairs[key]) return;
+        linkPairs[key] = true;
+        const other = chains[j];
+        let ba = 0, bb = 0, bd = Infinity;
+        ch.nodes.forEach((p, a) => {
+          const ax = ch.nx * W + p.x * scale0;
+          const ay = ch.ny * H + p.y * scale0;
+          other.nodes.forEach((q, b) => {
+            const dx = ax - (other.nx * W + q.x * scale0);
+            const dy = ay - (other.ny * H + q.y * scale0);
+            const d = dx * dx + dy * dy;
+            if (d < bd) { bd = d; ba = a; bb = b; }
+          });
+        });
+        ch.links.push({ to: j, a: ba, b: bb });
+      });
+    });
+
+    const dustCount = Math.round(Math.min(90, Math.max(30, (W * H) / 24000)));
+    const dustCols = Math.max(1, Math.round(Math.sqrt(dustCount * aspect)));
+    const dustRows = Math.max(1, Math.ceil(dustCount / dustCols));
+    for (let i = 0; i < dustCount; i += 1) {
+      const col = i % dustCols;
+      const row = Math.floor(i / dustCols);
+      const cool = Math.random() < 0.16;
+      dust.push({
+        nx: (col + rand(0.12, 0.88)) / dustCols,
+        ny: (row + rand(0.12, 0.88)) / dustRows,
+        r: rand(0.4, 1.1), ph: rand(0, TAU), sp: rand(0.35, 1.2),
+        a: rand(0.16, 0.5), par: rand(0.2, 1),
+        sprite: getSprite(cool ? [127, 190, 210] : [231, 201, 148])
+      });
+    }
+  }
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    W = Math.max(1, Math.round(rect.width || window.innerWidth));
+    H = Math.max(1, Math.round(rect.height || window.innerHeight));
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+  }
+
+  function update(dt) {
+    t += dt;
+    const ease = Math.min(1, dt * 1.6);
+    pointer.cx += (pointer.x - pointer.cx) * ease;
+    pointer.cy += (pointer.y - pointer.cy) * ease;
+    chains.forEach((ch) => {
+      ch.pulse += dt * ch.pv;
+      if (ch.pulse >= ch.spine.length - 1) {
+        ch.pulse = 0;
+        ch.pv = rand(0.22, 0.52);
+      }
+    });
+  }
+
+  function draw() {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+
+    const scale = Math.min(1.2, Math.max(0.55, W / 1400));
+
+    dust.forEach((d) => {
+      const tw = 0.5 + 0.5 * Math.sin(t * d.sp + d.ph);
+      const x = d.nx * W + pointer.cx * 14 * d.par;
+      const y = d.ny * H + pointer.cy * 14 * d.par;
+      const size = (d.r * 7 + 3) * (0.8 + 0.35 * tw);
+      ctx.globalAlpha = d.a * (0.4 + 0.6 * tw);
+      ctx.drawImage(d.sprite, x - size / 2, y - size / 2, size, size);
+      ctx.globalAlpha = d.a * (0.55 + 0.45 * tw);
+      ctx.fillStyle = 'rgba(240,231,212,1)';
+      ctx.beginPath();
+      ctx.arc(x, y, d.r * 0.5, 0, TAU);
+      ctx.fill();
+    });
+
+    const all = [];
+    const layout = chains.map((ch, ci) => {
+      const cx = ch.nx * W + Math.sin(t * ch.sx + ch.ph) * ch.ax + pointer.cx * 11 * ch.par;
+      const cy = ch.ny * H + Math.cos(t * ch.sy + ch.ph2) * ch.ay + pointer.cy * 11 * ch.par;
+      const fade = Math.min(1, Math.max(0, Math.min(cx, W - cx, cy, H - cy) / 140));
+      const rot = ch.rot + t * ch.vr;
+      const cos = Math.cos(rot), sin = Math.sin(rot);
+      const stars = ch.nodes.map((p) => {
+        const x = cx + (p.x * cos - p.y * sin) * scale;
+        const y = cy + (p.x * sin + p.y * cos) * scale;
+        const tw = 0.5 + 0.5 * Math.sin(t * ch.tw + p.ph);
+        return { x, y, r: p.r, tw, fade };
+      });
+      stars.forEach((s) => all.push({ x: s.x, y: s.y, fade, c: ci }));
+      return { ch, stars, fade };
+    });
+
+    // 群与群之间若隐若现的暗线
+    ctx.lineWidth = 0.7;
+    for (let i = 0; i < all.length; i += 1) {
+      for (let j = i + 1; j < all.length; j += 1) {
+        const a = all[i], b = all[j];
+        if (a.c === b.c) continue;
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 > 32000) continue;
+        const alpha = (1 - Math.sqrt(d2) / 179) * 0.16 * Math.min(a.fade, b.fade);
+        if (alpha < 0.004) continue;
+        ctx.strokeStyle = 'rgba(201,164,106,' + alpha.toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+
+    // 星链之间的跨群连线
+    layout.forEach(({ ch, stars, fade }) => {
+      ch.links.forEach((lk) => {
+        const other = layout[lk.to];
+        if (!other) return;
+        const p = stars[lk.a], q = other.stars[lk.b];
+        const alpha = 0.11 * Math.min(fade, other.fade);
+        ctx.strokeStyle = 'rgba(201,164,106,' + alpha.toFixed(3) + ')';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(q.x, q.y);
+        ctx.stroke();
+      });
+    });
+
+    layout.forEach(({ ch, stars, fade }) => {
+      const col = ch.color.join(',');
+      ch.edges.forEach((e, i) => {
+        const p = stars[e[0]], q = stars[e[1]];
+        const tw = 0.5 + 0.5 * Math.sin(t * 0.8 + i * 1.6 + ch.ph);
+        ctx.strokeStyle = 'rgba(' + col + ',' + ((0.17 + 0.15 * tw) * fade).toFixed(3) + ')';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(q.x, q.y);
+        ctx.stroke();
+      });
+
+      stars.forEach((s) => {
+        const size = (s.r * 6 + 4) * (0.78 + 0.32 * s.tw);
+        ctx.globalAlpha = s.fade * (0.32 + 0.55 * s.tw);
+        ctx.drawImage(ch.sprite, s.x - size / 2, s.y - size / 2, size, size);
+        ctx.globalAlpha = s.fade * (0.65 + 0.35 * s.tw);
+        ctx.fillStyle = 'rgba(247,236,216,1)';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, Math.max(0.45, s.r * 0.55), 0, TAU);
+        ctx.fill();
+        if (s.r > 1.7) {
+          const len = 6 + s.tw * 5;
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = 'rgba(240,215,170,' + (0.3 * s.fade * s.tw).toFixed(3) + ')';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(s.x - len, s.y);
+          ctx.lineTo(s.x + len, s.y);
+          ctx.moveTo(s.x, s.y - len);
+          ctx.lineTo(s.x, s.y + len);
+          ctx.stroke();
+        }
+      });
+
+      // 沿主脉流动的星芒
+      const max = ch.spine.length - 1;
+      const head = Math.min(max, ch.pulse);
+      for (let k = 3; k >= 0; k -= 1) {
+        const p = head - k * 0.17;
+        if (p < 0) continue;
+        const i = Math.min(max - 1, Math.floor(p));
+        const f = Math.min(1, p - i);
+        const a = stars[ch.spine[i]], b = stars[ch.spine[i + 1]];
+        const x = a.x + (b.x - a.x) * f;
+        const y = a.y + (b.y - a.y) * f;
+        const size = k === 0 ? 16 : 11 - k * 2;
+        ctx.globalAlpha = (k === 0 ? 0.9 : 0.24 / k) * fade;
+        ctx.drawImage(ch.sprite, x - size / 2, y - size / 2, size, size);
+      }
+    });
+
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  function frame(now) {
+    const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+    last = now;
+    update(dt);
+    draw();
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (reduce) { draw(); return; }
+    if (running) return;
+    running = true;
+    last = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+
+  function stop() {
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = null;
+  }
+
+  const onPointerMove = (e) => {
+    pointer.x = (e.clientX / W) * 2 - 1;
+    pointer.y = (e.clientY / H) * 2 - 1;
+  };
+  const onResize = () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      resizeCanvas();
+      draw();
+    }, 160);
+  };
+  const onVisibility = () => {
+    if (document.hidden) stop();
+    else start();
+  };
+  const onReduceChange = (e) => {
+    reduce = e.matches;
+    if (reduce) { stop(); draw(); } else { start(); }
+  };
+
+  resizeCanvas();
+  build();
+  draw();
+  start();
+
+  window.addEventListener('pointermove', onPointerMove, { passive: true });
+  window.addEventListener('resize', onResize);
+  document.addEventListener('visibilitychange', onVisibility);
+  if (reduceMQ.addEventListener) reduceMQ.addEventListener('change', onReduceChange);
+  else if (reduceMQ.addListener) reduceMQ.addListener(onReduceChange);
+})();
 
 if (window.Vue) {
   boot();
