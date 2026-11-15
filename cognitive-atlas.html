@@ -2026,9 +2026,47 @@ function initAtlas(canvas, domains, bridges, callbacks) {
   let t = 0, raf = null, running = false, last = 0, resizeTimer = null;
   let chains = [];
   const dust = [];
-  const pointer = { x: 0, y: 0, cx: 0, cy: 0 };
+  const bandStars = [];
+  const ripples = [];
+  let nebulaTex = null, milkyTex = null;
+  let band = { cx: 0, cy: 0, ang: -0.38, halfW: 160 };
+  const pointer = { nx: 0, ny: 0, mx: -1e4, my: -1e4, tx: -1e4, ty: -1e4, active: false };
+  const WEB_R = 190;
+  let shockX = 0, shockY = 0;
 
   const rand = (a, b) => a + Math.random() * (b - a);
+  const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
+  // 在银河带附近取点：along 沿带方向，perp 垂直带方向
+  const bandPoint = (spread) => {
+    const ca = Math.cos(band.ang), sa = Math.sin(band.ang);
+    const along = rand(-0.78, 0.78) * Math.hypot(W, H) * 0.62;
+    const perp = gauss() * band.halfW * (spread || 1);
+    return { x: band.cx + along * ca - perp * sa, y: band.cy + along * sa + perp * ca };
+  };
+  const nearBoost = (x, y) => {
+    const dx = x - pointer.mx, dy = y - pointer.my;
+    const d2 = dx * dx + dy * dy;
+    if (d2 > WEB_R * WEB_R) return 0;
+    return 1 - Math.sqrt(d2) / WEB_R;
+  };
+  // 点击涟漪向外推挤星点
+  const shockAt = (x, y) => {
+    shockX = 0;
+    shockY = 0;
+    for (let i = 0; i < ripples.length; i += 1) {
+      const rp = ripples[i];
+      const age = t - rp.born;
+      if (age < 0 || age > 1.15) continue;
+      const ex = x - rp.x, ey = y - rp.y;
+      const d = Math.sqrt(ex * ex + ey * ey);
+      if (d < 2 || d > 360) continue;
+      const wave = Math.max(0, 1 - Math.abs(d - age * 300) / 170);
+      const push = (1 - age / 1.15) * wave * 16 * (1 - d / 360);
+      if (push <= 0) continue;
+      shockX += (ex / d) * push;
+      shockY += (ey / d) * push;
+    }
+  };
 
   const PALETTES = [
     { rgb: [231, 201, 148], w: 0.56 },
@@ -2064,9 +2102,55 @@ function initAtlas(canvas, domains, bridges, callbacks) {
     return c;
   };
 
+  // 程序化星云贴图：多个柔光团叠加，边缘羽化
+  function makeNebula(rgb) {
+    const size = 256;
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    const g = c.getContext('2d');
+    const col = rgb.join(',');
+    g.globalCompositeOperation = 'lighter';
+    const blobs = 10 + ((Math.random() * 6) | 0);
+    for (let i = 0; i < blobs; i += 1) {
+      const a = rand(0, TAU);
+      const rad = Math.random() * size * 0.24;
+      const x = size / 2 + Math.cos(a) * rad;
+      const y = size / 2 + Math.sin(a) * rad * 0.82;
+      const r = rand(size * 0.1, size * 0.3);
+      const al = rand(0.06, 0.16);
+      const grd = g.createRadialGradient(x, y, 0, x, y, r);
+      grd.addColorStop(0, 'rgba(' + col + ',' + al.toFixed(3) + ')');
+      grd.addColorStop(0.52, 'rgba(' + col + ',' + (al * 0.34).toFixed(3) + ')');
+      grd.addColorStop(1, 'rgba(' + col + ',0)');
+      g.fillStyle = grd;
+      g.beginPath();
+      g.arc(x, y, r, 0, TAU);
+      g.fill();
+    }
+    g.globalCompositeOperation = 'destination-in';
+    const mask = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    mask.addColorStop(0, 'rgba(0,0,0,1)');
+    mask.addColorStop(0.6, 'rgba(0,0,0,.82)');
+    mask.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = mask;
+    g.fillRect(0, 0, size, size);
+    return c;
+  }
+
   function build() {
     chains = [];
     dust.length = 0;
+    bandStars.length = 0;
+    ripples.length = 0;
+    if (!pointer.active) { pointer.mx = W / 2; pointer.my = H / 2; }
+
+    // 银河带：斜贯画面的柔光带
+    band = {
+      cx: W * rand(0.4, 0.6),
+      cy: H * rand(0.44, 0.58),
+      ang: rand(-0.52, -0.3),
+      halfW: Math.min(Math.max(H * 0.15, 88), 240)
+    };
 
     const chainCount = Math.round(Math.min(12, Math.max(5, W / 200)));
 
@@ -2159,7 +2243,7 @@ function initAtlas(canvas, domains, bridges, callbacks) {
         ax: rand(14, 44), ay: rand(10, 36),
         sx: rand(0.035, 0.075), sy: rand(0.03, 0.07),
         ph: rand(0, TAU), ph2: rand(0, TAU),
-        par: rand(0.5, 1.4), tw: rand(0.5, 1.1),
+        par: rand(0.9, 1.5), tw: rand(0.5, 1.1),
         pulse: rand(0, Math.max(0.5, spine.length - 1)), pv: rand(0.22, 0.5)
       });
     }
@@ -2197,21 +2281,179 @@ function initAtlas(canvas, domains, bridges, callbacks) {
       });
     });
 
-    const dustCount = Math.round(Math.min(90, Math.max(30, (W * H) / 24000)));
+    // 散星：远中近三层，各自的视差不同，拉开纵深
+    const dustCount = Math.round(Math.min(130, Math.max(46, (W * H) / 18000)));
     const dustCols = Math.max(1, Math.round(Math.sqrt(dustCount * aspect)));
     const dustRows = Math.max(1, Math.ceil(dustCount / dustCols));
     for (let i = 0; i < dustCount; i += 1) {
       const col = i % dustCols;
       const row = Math.floor(i / dustCols);
-      const cool = Math.random() < 0.16;
+      const layer = Math.random();
+      const far = layer < 0.45;
+      const mid = !far && layer < 0.82;
       dust.push({
-        nx: (col + rand(0.12, 0.88)) / dustCols,
-        ny: (row + rand(0.12, 0.88)) / dustRows,
-        r: rand(0.4, 1.1), ph: rand(0, TAU), sp: rand(0.35, 1.2),
-        a: rand(0.16, 0.5), par: rand(0.2, 1),
-        sprite: getSprite(cool ? [127, 190, 210] : [231, 201, 148])
+        x: (col + rand(0.12, 0.88)) / dustCols * W,
+        y: (row + rand(0.12, 0.88)) / dustRows * H,
+        r: far ? rand(0.32, 0.7) : mid ? rand(0.5, 1.0) : rand(0.8, 1.5),
+        ph: rand(0, TAU), sp: rand(0.35, 1.3),
+        a: far ? rand(0.1, 0.26) : mid ? rand(0.18, 0.4) : rand(0.28, 0.62),
+        par: far ? rand(0.25, 0.5) : mid ? rand(0.55, 0.9) : rand(0.95, 1.3),
+        sprite: getSprite(Math.random() < 0.15 ? [127, 190, 210] : [231, 201, 148])
       });
     }
+
+    // 银河带里的闪烁高光星
+    const bCount = Math.round(Math.min(190, Math.max(80, (W * H) / 9000)));
+    for (let i = 0; i < bCount; i += 1) {
+      const p = bandPoint(Math.random() < 0.6 ? 0.42 : 1.05);
+      if (p.x < 6 || p.x > W - 6 || p.y < 6 || p.y > H - 6) continue;
+      const warm = Math.random() < 0.74;
+      bandStars.push({
+        x: p.x, y: p.y,
+        r: rand(0.45, 1.25) * (Math.random() < 0.08 ? 1.9 : 1),
+        ph: rand(0, TAU), sp: rand(0.4, 1.7), a: rand(0.22, 0.62),
+        par: rand(0.3, 0.85),
+        sprite: getSprite(warm ? [231, 201, 148] : [127, 190, 210])
+      });
+    }
+
+    buildSkyTextures();
+  }
+
+  // 预渲染：银河带（含尘埃带与细密星尘）与深层星云，分两层产生视差
+  function buildSkyTextures() {
+    const s = 0.5;
+    const sw = Math.max(2, Math.round(W * s));
+    const sh = Math.max(2, Math.round(H * s));
+    const diag = Math.hypot(sw, sh);
+    const ca = Math.cos(band.ang), sa = Math.sin(band.ang);
+    const bx = band.cx * s, by = band.cy * s, bhw = Math.max(24, band.halfW * s);
+
+    /* ---- 银河带 ---- */
+    const milky = document.createElement('canvas');
+    milky.width = sw;
+    milky.height = sh;
+    const m = milky.getContext('2d');
+    m.save();
+    m.translate(bx, by);
+    m.rotate(band.ang);
+    const bloom = m.createLinearGradient(0, -bhw * 2.1, 0, bhw * 2.1);
+    bloom.addColorStop(0, 'rgba(111,184,206,0)');
+    bloom.addColorStop(0.2, 'rgba(111,184,206,.04)');
+    bloom.addColorStop(0.38, 'rgba(201,164,106,.085)');
+    bloom.addColorStop(0.5, 'rgba(240,231,212,.15)');
+    bloom.addColorStop(0.62, 'rgba(201,164,106,.085)');
+    bloom.addColorStop(0.8, 'rgba(156,140,216,.042)');
+    bloom.addColorStop(1, 'rgba(156,140,216,0)');
+    m.fillStyle = bloom;
+    m.fillRect(-diag, -bhw * 2.1, diag * 2, bhw * 4.2);
+    // 更亮的星系核，让银河带有一条可辨认的主轴
+    const core = m.createLinearGradient(0, -bhw * 0.55, 0, bhw * 0.55);
+    core.addColorStop(0, 'rgba(236,226,205,0)');
+    core.addColorStop(0.42, 'rgba(236,226,205,.055)');
+    core.addColorStop(0.5, 'rgba(247,240,226,.13)');
+    core.addColorStop(0.58, 'rgba(236,226,205,.055)');
+    core.addColorStop(1, 'rgba(236,226,205,0)');
+    m.fillStyle = core;
+    m.fillRect(-diag, -bhw * 0.55, diag * 2, bhw * 1.1);
+    m.restore();
+
+    // 带内星云团，让银河有明暗起伏
+    m.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 7; i += 1) {
+      const spr = makeNebula(i % 3 === 2 ? [150, 190, 214] : i % 3 === 1 ? [236, 226, 205] : [201, 164, 106]);
+      const along = rand(-0.62, 0.62) * diag;
+      const perp = gauss() * bhw * 0.62;
+      const x = bx + along * ca - perp * sa;
+      const y = by + along * sa + perp * ca;
+      const size = rand(bhw * 1.8, bhw * 4.2);
+      m.globalAlpha = rand(0.3, 0.6);
+      m.save();
+      m.translate(x, y);
+      m.rotate(rand(0, TAU));
+      m.drawImage(spr, -size / 2, -size / 2, size, size * rand(0.65, 0.95));
+      m.restore();
+    }
+    m.globalAlpha = 1;
+
+    // 暗尘埃带：在银河里刻出起伏的暗纹
+    m.save();
+    m.translate(bx, by);
+    m.rotate(band.ang);
+    m.globalCompositeOperation = 'destination-out';
+    for (let i = 0; i < 5; i += 1) {
+      const lx = rand(-0.45, 0.45) * diag;
+      const ly = rand(-0.62, 0.62) * bhw;
+      const lw = rand(bhw * 1.4, bhw * 3.4);
+      const lh = lw * rand(0.12, 0.3);
+      const grd = m.createRadialGradient(0, 0, 0, 0, 0, lw);
+      grd.addColorStop(0, 'rgba(0,0,0,.42)');
+      grd.addColorStop(0.5, 'rgba(0,0,0,.2)');
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      m.fillStyle = grd;
+      m.save();
+      m.translate(lx, ly);
+      m.scale(1, lh / lw);
+      m.beginPath();
+      m.arc(0, 0, lw, 0, TAU);
+      m.fill();
+      m.restore();
+    }
+    m.restore();
+
+    // 带内细密星尘与疏散星团
+    m.globalCompositeOperation = 'lighter';
+    const specks = Math.round(Math.min(3800, (sw * sh) / 300));
+    for (let i = 0; i < specks; i += 1) {
+      const along = rand(-0.8, 0.8) * diag;
+      // 六成星尘紧贴银河核心，其余散布在带翼
+      const perp = gauss() * bhw * (Math.random() < 0.6 ? 0.4 : 1.05);
+      const x = bx + along * ca - perp * sa;
+      const y = by + along * sa + perp * ca;
+      if (x < 0 || x > sw || y < 0 || y > sh) continue;
+      const cool = Math.random() < 0.17;
+      m.fillStyle = cool
+        ? 'rgba(150,196,214,' + rand(0.12, 0.5).toFixed(2) + ')'
+        : 'rgba(244,236,220,' + rand(0.12, 0.58).toFixed(2) + ')';
+      const sz = Math.random() < 0.07 ? 1.6 : 1;
+      m.fillRect(x, y, sz, sz);
+    }
+    for (let i = 0; i < 10; i += 1) {
+      const along = rand(-0.7, 0.7) * diag;
+      const perp = gauss() * bhw * 0.55;
+      const cx0 = bx + along * ca - perp * sa;
+      const cy0 = by + along * sa + perp * ca;
+      const spread = rand(5, 16);
+      for (let j = 0; j < 34; j += 1) {
+        const x = cx0 + gauss() * spread;
+        const y = cy0 + gauss() * spread * 0.8;
+        if (x < 0 || x > sw || y < 0 || y > sh) continue;
+        m.fillStyle = 'rgba(245,238,224,' + rand(0.2, 0.6).toFixed(2) + ')';
+        m.fillRect(x, y, 1, 1);
+      }
+    }
+    milkyTex = milky;
+
+    /* ---- 深层星云 ---- */
+    const neb = document.createElement('canvas');
+    neb.width = sw;
+    neb.height = sh;
+    const n = neb.getContext('2d');
+    n.globalCompositeOperation = 'lighter';
+    const tints = [[201, 164, 106], [111, 184, 206], [156, 140, 216], [236, 226, 205], [126, 158, 206]];
+    for (let i = 0; i < 8; i += 1) {
+      const spr = makeNebula(tints[i % tints.length]);
+      const size = rand(sh * 0.5, sh * 1.15);
+      const x = rand(-0.06, 1.06) * sw;
+      const y = rand(-0.08, 1.08) * sh;
+      n.globalAlpha = rand(0.1, 0.22);
+      n.save();
+      n.translate(x, y);
+      n.rotate(rand(0, TAU));
+      n.drawImage(spr, -size / 2, -size / 2, size, size * rand(0.55, 1));
+      n.restore();
+    }
+    nebulaTex = neb;
   }
 
   function resizeCanvas() {
@@ -2225,9 +2467,14 @@ function initAtlas(canvas, domains, bridges, callbacks) {
 
   function update(dt) {
     t += dt;
-    const ease = Math.min(1, dt * 1.6);
-    pointer.cx += (pointer.x - pointer.cx) * ease;
-    pointer.cy += (pointer.y - pointer.cy) * ease;
+    if (pointer.active) {
+      const pEase = Math.min(1, dt * 5);
+      pointer.mx += (pointer.tx - pointer.mx) * pEase;
+      pointer.my += (pointer.ty - pointer.my) * pEase;
+      const nEase = Math.min(1, dt * 2.6);
+      pointer.nx += (((pointer.mx / Math.max(1, W)) * 2 - 1) - pointer.nx) * nEase;
+      pointer.ny += (((pointer.my / Math.max(1, H)) * 2 - 1) - pointer.ny) * nEase;
+    }
     chains.forEach((ch) => {
       ch.pulse += dt * ch.pv;
       if (ch.pulse >= ch.spine.length - 1) {
@@ -2235,41 +2482,79 @@ function initAtlas(canvas, domains, bridges, callbacks) {
         ch.pv = rand(0.22, 0.52);
       }
     });
+    for (let i = ripples.length - 1; i >= 0; i -= 1) {
+      if (t - ripples[i].born > 1.7) ripples.splice(i, 1);
+    }
   }
 
   function draw() {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    ctx.globalCompositeOperation = 'lighter';
 
+    const pxn = pointer.nx;
+    const pyn = pointer.ny;
+    const mx = pointer.mx;
+    const my = pointer.my;
+    const active = pointer.active;
     const scale = Math.min(1.2, Math.max(0.55, W / 1400));
+    const hasRipples = ripples.length > 0;
 
+    // ---- 星云与银河带：不同的漂移/视差速度拉开层次 ----
+    ctx.globalCompositeOperation = 'lighter';
+    const breathe = 0.92 + 0.08 * Math.sin(t * 0.09);
+    if (nebulaTex) {
+      ctx.globalAlpha = 0.9;
+      ctx.drawImage(
+        nebulaTex,
+        -W * 0.03 + pxn * 9 + Math.sin(t * 0.026) * 5,
+        -H * 0.03 + pyn * 7 + Math.cos(t * 0.021) * 5,
+        W * 1.06, H * 1.06
+      );
+    }
+    if (milkyTex) {
+      ctx.globalAlpha = 0.96 * breathe;
+      ctx.drawImage(
+        milkyTex,
+        -W * 0.03 + pxn * 17 + Math.sin(t * 0.017 + 1.2) * 6,
+        -H * 0.03 + pyn * 13 + Math.cos(t * 0.014 + 0.6) * 6,
+        W * 1.06, H * 1.06
+      );
+    }
+    ctx.globalAlpha = 1;
+
+    // ---- 计算各层星位（视差 + 涟漪冲击 + 鼠标靠近增益）----
     dust.forEach((d) => {
-      const tw = 0.5 + 0.5 * Math.sin(t * d.sp + d.ph);
-      const x = d.nx * W + pointer.cx * 14 * d.par;
-      const y = d.ny * H + pointer.cy * 14 * d.par;
-      const size = (d.r * 7 + 3) * (0.8 + 0.35 * tw);
-      ctx.globalAlpha = d.a * (0.4 + 0.6 * tw);
-      ctx.drawImage(d.sprite, x - size / 2, y - size / 2, size, size);
-      ctx.globalAlpha = d.a * (0.55 + 0.45 * tw);
-      ctx.fillStyle = 'rgba(240,231,212,1)';
-      ctx.beginPath();
-      ctx.arc(x, y, d.r * 0.5, 0, TAU);
-      ctx.fill();
+      let x = d.x + pxn * 30 * d.par + Math.sin(t * 0.05 + d.ph) * 2.4;
+      let y = d.y + pyn * 24 * d.par + Math.cos(t * 0.043 + d.ph) * 2.4;
+      if (hasRipples) { shockAt(x, y); x += shockX; y += shockY; }
+      d.px = x;
+      d.py = y;
+      d.ptw = 0.5 + 0.5 * Math.sin(t * d.sp + d.ph);
+      d.pb = active ? nearBoost(x, y) : 0;
+    });
+    bandStars.forEach((s) => {
+      let x = s.x + pxn * 20 * s.par + Math.sin(t * 0.055 + s.ph) * 2;
+      let y = s.y + pyn * 16 * s.par + Math.cos(t * 0.048 + s.ph) * 2;
+      if (hasRipples) { shockAt(x, y); x += shockX; y += shockY; }
+      s.px = x;
+      s.py = y;
+      s.ptw = 0.5 + 0.5 * Math.sin(t * s.sp + s.ph);
+      s.pb = active ? nearBoost(x, y) : 0;
     });
 
     const all = [];
     const layout = chains.map((ch, ci) => {
-      const cx = ch.nx * W + Math.sin(t * ch.sx + ch.ph) * ch.ax + pointer.cx * 11 * ch.par;
-      const cy = ch.ny * H + Math.cos(t * ch.sy + ch.ph2) * ch.ay + pointer.cy * 11 * ch.par;
+      const cx = ch.nx * W + Math.sin(t * ch.sx + ch.ph) * ch.ax + pxn * 30 * ch.par;
+      const cy = ch.ny * H + Math.cos(t * ch.sy + ch.ph2) * ch.ay + pyn * 26 * ch.par;
       const fade = Math.min(1, Math.max(0, Math.min(cx, W - cx, cy, H - cy) / 140));
       const rot = ch.rot + t * ch.vr;
       const cos = Math.cos(rot), sin = Math.sin(rot);
       const stars = ch.nodes.map((p) => {
-        const x = cx + (p.x * cos - p.y * sin) * scale;
-        const y = cy + (p.x * sin + p.y * cos) * scale;
+        let x = cx + (p.x * cos - p.y * sin) * scale;
+        let y = cy + (p.x * sin + p.y * cos) * scale;
+        if (hasRipples) { shockAt(x, y); x += shockX; y += shockY; }
         const tw = 0.5 + 0.5 * Math.sin(t * ch.tw + p.ph);
-        return { x, y, r: p.r, tw, fade };
+        return { x, y, r: p.r, tw, fade, b: active ? nearBoost(x, y) : 0 };
       });
       stars.forEach((s) => all.push({ x: s.x, y: s.y, fade, c: ci }));
       return { ch, stars, fade };
@@ -2310,6 +2595,41 @@ function initAtlas(canvas, domains, bridges, callbacks) {
       });
     });
 
+    // 鼠标与星图之间的连线：指针到近星，近星之间再补一层暗网
+    if (active) {
+      const near = [];
+      dust.forEach((d) => { if (d.pb > 0.05) near.push({ x: d.px, y: d.py, b: d.pb }); });
+      bandStars.forEach((s) => { if (s.pb > 0.05) near.push({ x: s.px, y: s.py, b: s.pb }); });
+      layout.forEach((L) => L.stars.forEach((s) => { if (s.b > 0.05) near.push({ x: s.x, y: s.y, b: s.b }); }));
+      near.sort((a, b) => b.b - a.b);
+      const picked = near.slice(0, 26);
+      ctx.lineWidth = 0.8;
+      picked.forEach((p) => {
+        const al = 0.28 * p.b * p.b;
+        if (al < 0.008) return;
+        ctx.strokeStyle = 'rgba(231,201,148,' + al.toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.moveTo(mx, my);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      });
+      for (let i = 0; i < picked.length; i += 1) {
+        for (let j = i + 1; j < picked.length; j += 1) {
+          const a = picked[i], b = picked[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 > 12000) continue;
+          const al = 0.12 * (1 - Math.sqrt(d2) / 110) * Math.min(a.b, b.b);
+          if (al < 0.008) continue;
+          ctx.strokeStyle = 'rgba(201,164,106,' + al.toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+
     layout.forEach(({ ch, stars, fade }) => {
       const col = ch.color.join(',');
       ch.edges.forEach((e, i) => {
@@ -2324,18 +2644,18 @@ function initAtlas(canvas, domains, bridges, callbacks) {
       });
 
       stars.forEach((s) => {
-        const size = (s.r * 6 + 4) * (0.78 + 0.32 * s.tw);
-        ctx.globalAlpha = s.fade * (0.32 + 0.55 * s.tw);
+        const size = (s.r * 6 + 4) * (0.78 + 0.32 * s.tw) * (1 + s.b * 1.1);
+        ctx.globalAlpha = Math.min(1, s.fade * (0.32 + 0.55 * s.tw) * (1 + s.b * 1.6));
         ctx.drawImage(ch.sprite, s.x - size / 2, s.y - size / 2, size, size);
-        ctx.globalAlpha = s.fade * (0.65 + 0.35 * s.tw);
+        ctx.globalAlpha = Math.min(1, s.fade * (0.65 + 0.35 * s.tw) * (1 + s.b * 0.8));
         ctx.fillStyle = 'rgba(247,236,216,1)';
         ctx.beginPath();
         ctx.arc(s.x, s.y, Math.max(0.45, s.r * 0.55), 0, TAU);
         ctx.fill();
         if (s.r > 1.7) {
-          const len = 6 + s.tw * 5;
+          const len = (6 + s.tw * 5) * (1 + s.b * 0.5);
           ctx.globalAlpha = 1;
-          ctx.strokeStyle = 'rgba(240,215,170,' + (0.3 * s.fade * s.tw).toFixed(3) + ')';
+          ctx.strokeStyle = 'rgba(240,215,170,' + Math.min(1, 0.3 * s.fade * s.tw + s.b * 0.3).toFixed(3) + ')';
           ctx.lineWidth = 0.8;
           ctx.beginPath();
           ctx.moveTo(s.x - len, s.y);
@@ -2363,7 +2683,89 @@ function initAtlas(canvas, domains, bridges, callbacks) {
       }
     });
 
+    // 银河带高光星
+    bandStars.forEach((s) => {
+      const size = (s.r * 6 + 3) * (0.78 + 0.34 * s.ptw) * (1 + s.pb * 1.4);
+      ctx.globalAlpha = Math.min(1, s.a * (0.3 + 0.7 * s.ptw) * (1 + s.pb * 2));
+      ctx.drawImage(s.sprite, s.px - size / 2, s.py - size / 2, size, size);
+      ctx.globalAlpha = Math.min(1, s.a * (0.5 + 0.5 * s.ptw) * (1 + s.pb));
+      ctx.fillStyle = 'rgba(248,240,226,1)';
+      ctx.beginPath();
+      ctx.arc(s.px, s.py, Math.max(0.28, s.r * 0.45), 0, TAU);
+      ctx.fill();
+    });
+
+    // 散星
+    dust.forEach((d) => {
+      const b = d.pb;
+      const size = (d.r * 7 + 3) * (0.8 + 0.35 * d.ptw) * (1 + b * 1.2);
+      ctx.globalAlpha = Math.min(1, d.a * (0.4 + 0.6 * d.ptw) * (1 + b * 1.8));
+      ctx.drawImage(d.sprite, d.px - size / 2, d.py - size / 2, size, size);
+      ctx.globalAlpha = Math.min(1, d.a * (0.55 + 0.45 * d.ptw));
+      ctx.fillStyle = 'rgba(240,231,212,1)';
+      ctx.beginPath();
+      ctx.arc(d.px, d.py, Math.max(0.3, d.r * 0.5), 0, TAU);
+      ctx.fill();
+    });
+
+    // 指针光晕与星图准星
+    if (active) {
+      const glow = getSprite([231, 201, 148]);
+      const pulse = 0.5 + 0.5 * Math.sin(t * 1.7);
+      ctx.globalAlpha = 0.05 + 0.03 * pulse;
+      ctx.drawImage(glow, mx - 110, my - 110, 220, 220);
+      ctx.globalAlpha = 0.16 + 0.05 * pulse;
+      ctx.strokeStyle = 'rgba(231,201,148,1)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([1.5, 7]);
+      ctx.lineDashOffset = -t * 9;
+      ctx.beginPath();
+      ctx.arc(mx, my, 27, 0, TAU);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.lineDashOffset = 0;
+      ctx.globalAlpha = 0.6;
+      ctx.fillStyle = 'rgba(240,215,170,1)';
+      ctx.beginPath();
+      ctx.arc(mx, my, 1.5, 0, TAU);
+      ctx.fill();
+    }
+
+    // 点击涟漪：三重光环 + 中心闪光
+    if (hasRipples) {
+      const maxR = Math.max(W, H) * 0.24;
+      const glow = getSprite([231, 201, 148]);
+      ripples.forEach((rp) => {
+        const age = t - rp.born;
+        const dur = 1.6;
+        if (age < 0 || age >= dur) return;
+        const k = age / dur;
+        const flash = Math.max(0, 1 - age / 0.42);
+        if (flash > 0) {
+          const fs = 90 + 190 * (1 - flash);
+          ctx.globalAlpha = flash * 0.45;
+          ctx.drawImage(glow, rp.x - fs / 2, rp.y - fs / 2, fs, fs);
+        }
+        for (let i = 0; i < 3; i += 1) {
+          const kk = k - i * 0.08;
+          if (kk <= 0 || kk >= 1) continue;
+          const e = 1 - Math.pow(1 - kk, 3);
+          const rad = 16 + e * maxR * (1 - i * 0.12);
+          ctx.globalAlpha = Math.pow(1 - kk, 2) * (i === 0 ? 0.4 : 0.2);
+          ctx.strokeStyle = i === 0
+            ? 'rgba(240,215,170,1)'
+            : i === 1 ? 'rgba(201,164,106,1)' : 'rgba(127,190,210,1)';
+          ctx.lineWidth = i === 0 ? 1.3 : 0.8;
+          ctx.beginPath();
+          ctx.arc(rp.x, rp.y, rad, 0, TAU);
+          ctx.stroke();
+        }
+      });
+    }
+
     ctx.globalAlpha = 1;
+    ctx.setLineDash([]);
+    ctx.lineDashOffset = 0;
     ctx.globalCompositeOperation = 'source-over';
   }
 
@@ -2390,13 +2792,40 @@ function initAtlas(canvas, domains, bridges, callbacks) {
   }
 
   const onPointerMove = (e) => {
-    pointer.x = (e.clientX / W) * 2 - 1;
-    pointer.y = (e.clientY / H) * 2 - 1;
+    pointer.tx = e.clientX;
+    pointer.ty = e.clientY;
+    if (!pointer.active) {
+      pointer.mx = e.clientX;
+      pointer.my = e.clientY;
+      pointer.nx = (e.clientX / Math.max(1, W)) * 2 - 1;
+      pointer.ny = (e.clientY / Math.max(1, H)) * 2 - 1;
+      pointer.active = true;
+    }
+  };
+  const onPointerDown = (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    pointer.tx = e.clientX;
+    pointer.ty = e.clientY;
+    if (!pointer.active) {
+      pointer.mx = e.clientX;
+      pointer.my = e.clientY;
+      pointer.active = true;
+    }
+    if (reduce) return;
+    ripples.push({ x: e.clientX, y: e.clientY, born: t });
+    if (ripples.length > 6) ripples.shift();
+  };
+  const onPointerOut = (e) => {
+    if (!e.relatedTarget) pointer.active = false;
+  };
+  const onPointerUp = (e) => {
+    if (e.pointerType !== 'mouse') pointer.active = false;
   };
   const onResize = () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
       resizeCanvas();
+      build();
       draw();
     }, 160);
   };
@@ -2415,6 +2844,9 @@ function initAtlas(canvas, domains, bridges, callbacks) {
   start();
 
   window.addEventListener('pointermove', onPointerMove, { passive: true });
+  window.addEventListener('pointerdown', onPointerDown, { passive: true });
+  window.addEventListener('pointerup', onPointerUp, { passive: true });
+  document.addEventListener('pointerout', onPointerOut);
   window.addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', onVisibility);
   if (reduceMQ.addEventListener) reduceMQ.addEventListener('change', onReduceChange);
