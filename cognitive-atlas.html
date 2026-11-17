@@ -885,7 +885,6 @@ kbd{font-family:var(--mono)}
   </div>
 </transition>
 </div>
-<script src="https://cdn.staticfile.org/vue/3.4.21/vue.global.prod.js"></script>
 <script>
 const DOMAINS = [
 {
@@ -2853,21 +2852,55 @@ function initAtlas(canvas, domains, bridges, callbacks) {
   else if (reduceMQ.addListener) reduceMQ.addListener(onReduceChange);
 })();
 
-if (window.Vue) {
-  boot();
-} else {
-  const fallback = document.createElement('script');
-  fallback.src = 'https://unpkg.com/vue@3/dist/vue.global.prod.js';
-  fallback.onload = boot;
-  fallback.onerror = function () {
+// Vue 多 CDN 依次降级 + 超时控制：单个 CDN 卡住时不再阻塞整页渲染
+(function loadVue() {
+  const SOURCES = [
+    'https://cdn.staticfile.net/vue/3.4.21/vue.global.prod.js',
+    'https://cdn.bootcdn.net/ajax/libs/vue/3.4.21/vue.global.prod.js',
+    'https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js',
+    'https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js',
+    'https://cdn.staticfile.org/vue/3.4.21/vue.global.prod.js'
+  ];
+  let index = 0;
+
+  const showError = () => {
     const app = document.getElementById('app');
-    if (app) {
-      app.removeAttribute('v-cloak');
-      app.innerHTML = '<div class="boot-error">界面框架加载失败。请检查网络连接后刷新页面。</div>';
-    }
+    if (!app) return;
+    app.removeAttribute('v-cloak');
+    app.innerHTML = '<div class="boot-error">界面框架加载失败。请检查网络连接后刷新页面。</div>';
   };
-  document.head.appendChild(fallback);
-}
+
+  const next = () => {
+    if (window.Vue) { boot(); return; }
+    if (index >= SOURCES.length) { showError(); return; }
+    const s = document.createElement('script');
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      next();
+    }, 2200);
+    s.async = true;
+    s.src = SOURCES[index++];
+    s.onload = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (window.Vue) boot();
+      else next();
+    };
+    s.onerror = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      next();
+    };
+    document.head.appendChild(s);
+  };
+
+  if (window.Vue) boot();
+  else next();
+})();
 </script>
 </body>
 </html>
