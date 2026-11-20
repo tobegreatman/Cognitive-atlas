@@ -39,7 +39,15 @@ body::after{
   content:"";position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:.03;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
-#star-chain{position:fixed;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none;opacity:.9}
+#star-chain{position:fixed;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none;opacity:.9;transition:opacity .45s ease}
+#star-chain.is-off{opacity:0}
+.sky-switch{position:fixed;right:22px;bottom:22px;z-index:150;display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 12px;border:1px solid rgba(201,164,106,.3);border-radius:999px;background:rgba(6,8,12,.55);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--gold);font-family:var(--mono);font-size:9px;letter-spacing:.18em;line-height:1;transition:border-color .25s,background .25s,color .25s}
+.sky-switch:hover{border-color:rgba(231,201,148,.6);background:rgba(10,14,20,.72);color:var(--gold-bright)}
+.sky-switch svg{width:13px;height:13px;fill:currentColor;opacity:.95;transition:transform .5s var(--ease)}
+.sky-switch:hover svg{transform:rotate(45deg)}
+.sky-switch[aria-pressed="false"]{color:var(--faint);border-color:rgba(141,139,144,.22);background:rgba(6,8,12,.4)}
+.sky-switch[aria-pressed="false"] svg{opacity:.5}
+@media(max-width:640px){.sky-switch{right:14px;bottom:14px;padding:7px 11px;font-size:8px;letter-spacing:.14em}}
 ::selection{background:rgba(201,164,106,.28);color:#fff}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -160,7 +168,7 @@ kbd{font-family:var(--mono)}
 .section-head{max-width:760px}
 .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--gold);text-transform:uppercase}
 .section-head h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,3.8vw,46px);line-height:1.3;letter-spacing:.04em;margin:18px 0 16px}
-.section-head .lead{font-size:14.5px;line-height:2;color:var(--muted);max-width:41em}
+.section-head .lead{font-size:14.5px;line-height:2;color:var(--muted);max-width:46em}
 .section-head .lead strong{color:var(--ink-2);font-weight:500}
 [data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:var(--d,0ms)}
 [data-reveal].is-in{opacity:1;transform:none}
@@ -234,7 +242,7 @@ kbd{font-family:var(--mono)}
 .item.open .item-body{grid-template-rows:1fr;opacity:1}
 .item-body-inner{overflow:hidden;min-height:0;padding:0 22px 0 88px}
 .item.open .item-body-inner{padding-bottom:22px}
-.item-text{font-size:15px;line-height:2;color:var(--ink-2);max-width:40em;padding-top:4px}
+.item-text{font-size:13px;line-height:2;color:var(--ink-2);max-width:40em;padding-top:4px}
 .item-note{display:grid;grid-template-columns:40px 1fr;gap:12px;margin-top:14px;padding:10px 0 10px 14px;border-left:2px solid var(--accent);background:linear-gradient(90deg,rgba(255,255,255,.025),transparent 70%);border-radius:0 6px 6px 0}
 .item-note span{padding-top:2px;font-size:9px;letter-spacing:.18em;color:var(--accent)}
 .item-note p{font-size:12.5px;line-height:1.9;color:var(--muted)}
@@ -291,7 +299,7 @@ kbd{font-family:var(--mono)}
 .table-wrap{margin-top:48px;border:1px solid var(--line);border-radius:16px;overflow:auto;background:var(--panel);-webkit-overflow-scrolling:touch}
 .matrix{width:100%;min-width:900px;border-collapse:collapse}
 .matrix th{font-family:var(--mono);font-size:9px;letter-spacing:.18em;font-weight:400;color:var(--faint);text-align:left;padding:16px 18px;border-bottom:1px solid var(--line-strong);white-space:nowrap;background:rgba(255,255,255,.012)}
-.matrix td{padding:20px 18px;border-bottom:1px solid var(--line);vertical-align:top;font-size:12.5px;line-height:1.85;color:var(--muted)}
+.matrix td{padding:18px;border-bottom:1px solid var(--line);vertical-align:top;font-size:12.5px;line-height:1.85;color:var(--muted)}
 .matrix tr:last-child td{border-bottom:0}
 .matrix tr:hover td{background:rgba(255,255,255,.018)}
 .matrix td:first-child{font-family:var(--serif);font-size:17px;color:var(--ink);white-space:nowrap}
@@ -336,7 +344,13 @@ kbd{font-family:var(--mono)}
 .case-lens{font-family:var(--serif);font-size:14px;letter-spacing:.1em;color:var(--accent);white-space:nowrap}
 .case-lens em{display:block;margin-top:7px;font-style:normal;font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--faint)}
 .case-body h4{font-family:var(--serif);font-weight:400;font-size:clamp(15px,1.5vw,17px);line-height:1.7;letter-spacing:.03em;color:var(--ink)}
+.case-body .case-ask{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.12em;color:var(--accent);opacity:.9;margin-bottom:7px}
+.case-body .case-a{margin-top:6px;padding-left:11px;border-left:1px solid var(--line-strong);font-family:var(--serif);font-size:clamp(14px,1.45vw,16px);line-height:1.85;letter-spacing:.03em;color:var(--ink-2)}
+.case-body .case-next{margin-top:10px;font-size:11.5px;line-height:1.9;letter-spacing:.03em;color:var(--gold)}
 .case-body p{margin-top:9px;font-size:12.5px;line-height:2;color:var(--muted);max-width:54em}
+.case-map{padding:24px clamp(24px,3.6vw,44px);border-bottom:1px solid var(--line);background:rgba(201,164,106,.035)}
+.case-map p{font-family:var(--serif);font-size:clamp(13px,1.4vw,15px);line-height:2.05;letter-spacing:.03em;color:var(--ink-2)}
+.case-map span{display:block;margin-top:12px;font-family:var(--sans);font-size:11.5px;letter-spacing:.06em;color:var(--gold)}
 .case-end{display:grid;grid-template-columns:44px 108px minmax(0,1fr);gap:clamp(14px,2.4vw,32px);padding:26px clamp(24px,3.6vw,44px) 30px;background:rgba(201,164,106,.045)}
 .case-end span{grid-column:1 / 3;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--gold);padding-top:6px}
 .case-end p{font-family:var(--serif);font-size:clamp(14px,1.45vw,16px);line-height:1.95;letter-spacing:.03em;color:var(--ink-2)}
@@ -435,6 +449,7 @@ kbd{font-family:var(--mono)}
   .case-study{margin-top:52px;border-radius:16px}
   .case-head{grid-template-columns:1fr;align-items:start;gap:18px;padding:26px 22px 22px}
   .case-q{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:16px}
+  .case-map{padding:20px 22px}
   .case-row{grid-template-columns:30px minmax(0,1fr);gap:0 12px;padding:21px 22px}
   .case-lens{grid-column:2;padding-top:2px}
   .case-body{grid-column:2;margin-top:10px}
@@ -516,6 +531,10 @@ kbd{font-family:var(--mono)}
 </head>
 <body>
 <canvas id="star-chain" aria-hidden="true"></canvas>
+<button id="sky-switch" class="sky-switch" type="button" aria-pressed="true" aria-label="关闭星空背景" title="关闭星空背景">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6c.62 5 2.24 6.62 7.24 7.24-5 .62-6.62 2.24-7.24 7.24-.62-5-2.24-6.62-7.24-7.24 5-.62 6.62-2.24 7.24-7.24z"/><circle cx="19.4" cy="18.8" r="1.5"/></svg>
+  <span>星空</span>
+</button>
 <div id="app" v-cloak>
 <div class="progress" :style="{width: progress + '%'}"></div>
 <header class="nav" :class="{solid: scrolled}">
@@ -784,53 +803,75 @@ kbd{font-family:var(--mono)}
           <p class="kicker">Case Study — One Case, Five Lenses</p>
           <h3>一张春运车票，<em>走完五问</em></h3>
         </div>
-        <p class="case-q">“为什么年年抢票，年年一票难求？”
-          <span>一个被反复讨论的经典问题：它同时牵动价格、推理、价值、心理与结构。拿它把五问试一遍，比记住五条定义有用。</span>
+        <p class="case-q">“年年一票难求，该不该涨价、该不该加运力？”
+          <span>一个被反复讨论的经典问题：它同时牵动价格、推理、价值、心理与结构。</span>
         </p>
       </header>
+      <div class="case-map">
+        <p>票价被按住，稀缺就变成排队和黄牛；<br>涨价和加运力都只能解决一半；<br>剩下的那一半，是“该让谁买不到票”的价值选择；<br>这场争论之所以吵不出结果，是因为它让人感到不公平；<br>而它年年重演，是因为几亿人被同一张时间表推上路。</p>
+        <span>于是问题从“该不该涨价、该不该加运力”，变成“该由谁承担稀缺”。</span>
+      </div>
       <div class="case-row" style="--accent:#D8A657">
         <span class="case-num">01</span>
         <span class="case-lens">经济学<em>ECONOMICS</em></span>
         <div class="case-body">
-          <h4>票价被压低了，稀缺不会消失，只会换一种计价方式。</h4>
+          <span class="case-ask">五问 · 谁在权衡什么</span>
+          <h4>为什么票价压得低，票反而更难买？</h4>
+          <p class="case-a">票价被按住，成本就从钱变成了排队和黄牛。</p>
           <p>春节的需求在几天内爆发，票价却长期受管制。低价并没有消灭稀缺，只是把成本从“钱”转移成“排队、抢票、黄牛与托关系”。铁路受运力约束，旅客在时间、金钱与确定性之间权衡，黄牛靠价差谋生——每个人都在自己的约束里做理性选择。</p>
+          <p class="case-next">→ 于是有了两个最直觉的答案：涨价，或者加运力。它们够不够？</p>
         </div>
       </div>
       <div class="case-row" style="--accent:#6FB8CE">
         <span class="case-num">02</span>
         <span class="case-lens">逻辑学<em>LOGIC</em></span>
         <div class="case-body">
-          <h4>“涨价”与“加运力”，都不是充分条件。</h4>
-          <p>“涨价就能解决”暗含一个前提：需求对价格足够敏感。但回家过年的需求高度刚性。“加运力就能解决”则混淆了平均与峰值：为几天峰值扩能，其余三百天都要为闲置买单。先分清必要与充分、相关与因果，再谈方案，才不至于把口号当推理。</p>
+          <span class="case-ask">五问 · 这个结论凭什么成立</span>
+          <h4>那涨价、加运力，为什么仍不够？</h4>
+          <p class="case-a">两个方案都有效，但都只解决一半。</p>
+          <p>先看目标：不是让市场出清，而是让想回家的人尽量都回得去。涨价能让供需在某个价位上重新相等，却不会多出一张票；需求越刚性，它只是把付不起的人筛掉。</p>
+          <p>加运力能多出票，却只在峰值几天有用；为峰值扩能，其余三百天都要为闲置买单。</p>
+          <p class="case-next">→ 两个方案都有边界。边界之外，剩下的是另一个问题：票不够时，该让谁买不到？</p>
         </div>
       </div>
       <div class="case-row" style="--accent:#9C8CD8">
         <span class="case-num">03</span>
         <span class="case-lens">哲学<em>PHILOSOPHY</em></span>
         <div class="case-body">
-          <h4>表面争的是价格，底下争的是“稀缺该由谁承担”。</h4>
-          <p>按支付意愿分配、按排队时间分配、按身份与需要分配，是三套不同的原则，背后是效率、平等与应得的价值排序。“回家过年”是偏好还是权利？实验回答不了，只能公开论证。承认这是一场伦理分歧，比把它伪装成技术问题更诚实。</p>
+          <span class="case-ask">五问 · 哪些前提值得怀疑</span>
+          <h4>票就那么多，该让谁买不到？</h4>
+          <p class="case-a">表面争的是价格，底下争的是“稀缺该由谁承担”。</p>
+          <p>问题于是从“有没有效”变成了“谁该被筛掉”。按支付意愿分配、按排队时间分配、按身份与需要分配，是三套不同的原则，背后是效率、平等与应得的价值排序。说白了：价高者得、先到先得，还是最需要者得？</p>
+          <p>“回家过年”是偏好还是权利？实验回答不了，只能公开论证。承认这是一场伦理分歧，比把它伪装成技术问题更诚实。</p>
+          <p class="case-next">→ 可为什么这场分歧一开口就容易吵起来？</p>
         </div>
       </div>
       <div class="case-row" style="--accent:#E08A9B">
         <span class="case-num">04</span>
         <span class="case-lens">心理学<em>PSYCHOLOGY</em></span>
         <div class="case-body">
-          <h4>人反对的往往不是涨价，而是“被趁火打劫”的感觉。</h4>
-          <p>公平启发式让人宁可一起排队，也不接受有人用钱插队；损失厌恶让“没抢到”的痛感远大于“多花钱”的痛感。也别忘了自己：你可能先有立场，再挑论据——这是确认偏误最日常的样子。看懂情绪与动机，不等于认同它们，而是知道自己被什么推着走。</p>
+          <span class="case-ask">五问 · 人为什么会这样判断</span>
+          <h4>为什么一谈涨价，人就这么大反应？</h4>
+          <p class="case-a">人反对的往往不是涨价，而是“被趁火打劫”的感觉。</p>
+          <p>这些原则之争之所以激烈，是因为人不只在算账，还在感到不公平。公平启发式让人宁可一起排队，也不接受有人用钱插队；损失厌恶让“没抢到”的痛感远大于“多花钱”的痛感。也别忘了自己：你可能先有立场，再挑论据——这是确认偏误最日常的样子。</p>
+          <p>但看懂情绪与动机，不等于认同它们，也不等于上一问的价值分歧是假的——公平感本身就是一种道德直觉，只是会被情绪放大。看懂它，是为了知道自己被什么推着走。</p>
+          <p class="case-next">→ 那这些情绪为什么年年出现，换个乘客还是一样？</p>
         </div>
       </div>
       <div class="case-row" style="--accent:#7FB89A">
         <span class="case-num">05</span>
         <span class="case-lens">社会学<em>SOCIOLOGY</em></span>
         <div class="case-body">
-          <h4>不是素质问题，是几亿人被同一张时间表推上路。</h4>
-          <p>城乡与区域差距、户籍与家庭结构、集中假期，共同制造了人类最大规模的周期性迁徙。黄牛并非道德败坏的孤例，而是价格管制的非正式产物。把个人放回结构里，“不理性”常常只是“没得选”——这也解释了为什么换个乘客，故事仍然一样。</p>
+          <span class="case-ask">五问 · 什么结构让人不得不如此</span>
+          <h4>为什么换个人，故事还是一样？</h4>
+          <p class="case-a">不是素质问题，是几亿人被同一张时间表推上路。</p>
+          <p>这些情绪不是凭空来的，它们由结构批量生产。城乡与区域差距、户籍与家庭结构、集中假期，共同制造了人类最大规模的周期性迁徙。第一问提到的黄牛，也不是道德败坏的孤例，而是价格管制的非正式产物。把个人放回结构里，“不理性”常常只是“没得选”。</p>
+          <p class="case-next">→ 那么，问题还是原来的问题吗？</p>
         </div>
       </div>
       <footer class="case-end">
         <span>五问之后</span>
-        <p>问题从“该不该涨价”，变成了“在什么约束下、用谁的成本，为谁保留回家过年的确定性”。它依然没有标准答案，但已经不是原来的问题了。</p>
+        <p>问题不再只是“该不该涨价、该不该加运力”，而是“在什么约束下、用谁的成本，为谁保留回家过年的确定性”。它依然没有标准答案，但已经不是原来的问题了。</p>
       </footer>
     </div>
     <div class="readings">
@@ -895,13 +936,13 @@ const DOMAINS = [
   tools: '边际分析 · 均衡 · 激励设计 · 反事实',
   pitfall: '沉没成本 · 单变量归因',
   classic: { q: '为什么演唱会门票一开售就“秒空”，黄牛手里却总有票？',
-    note: '官方票价通常低于市场愿意支付的价格，短缺便以抢票、排队与加价转售来消化。限购与实名制只是换了一种排队方式，并没有消除“票不够”这件事——价格被按住，稀缺仍在。' },
+    note: '官方票价通常低于市场愿意支付的价格，开售瞬间需求远大于供给，票便“秒空”。短缺不会消失，只会换一种分配方式：抢票、排队、加价转售。限购与实名制改变的是分配与转售规则，不是供给量——它们能抬高黄牛的成本，却没有消除“票不够”。黄牛不是短缺的根源，而是价差的产物；价差足够大，他们就有动力用脚本、账号和人海把票囤到手里。价格被按住，稀缺仍在。' },
   layers: [
     { label: '地基', title: '稀缺、代价与边际', summary: '一切经济分析的四块基石。', items: [
       { term: '稀缺性', en: 'Scarcity', claim: '资源相对于欲望永远不足，所以每一个“是”背后都有一个“否”。',
         body: '经济学从稀缺出发，而不是从货币出发。时间、注意力、信任与合法性同样是稀缺资源。稀缺意味着选择必然伴随放弃，也意味着“什么都要”在逻辑上不成立。',
         caution: '稀缺不等于短缺：短缺是某一价格下需求超过供给，价格管制是常见原因之一；稀缺是永恒条件。',
-        example: '免费的平台并不免费，你付出的价格是你的注意力与数据。' },
+        example: '一天只有 24 小时：刷两小时短视频，就少两小时睡觉、陪家人或读书。免费平台不收你的钱，收的是你的时间——钱可以买服务，却买不到第 25 个小时。' },
       { term: '机会成本', en: 'Opportunity Cost', claim: '一件东西的真实价格，是你为它放弃的最好替代方案。',
         body: '会计成本记录支出，机会成本记录放弃。后者往往不可见，却决定选择的质量。读研的成本不只是学费，还包括这几年最好的工作机会与经验积累。',
         caution: '沉没成本已经发生且不可回收，不应进入边际决策；机会成本只在存在替代方案时成立。',
@@ -909,9 +950,9 @@ const DOMAINS = [
       { term: '边际思维', en: 'Marginal Thinking', claim: '决策发生在“再多一单位”处，而不是在平均值处。',
         body: '总量告诉你处境，边际告诉你下一步。水和钻石的悖论、为什么“再刷一集”越来越不值得、为什么企业招到第 50 个人时效率开始下降，都是边际问题。',
         caution: '用平均成本代替边际成本，是最常见的决策错误之一。',
-        example: '自助餐吃到“回本”为止，是用平均思维替代了边际效用。' },
-      { term: '激励反应', en: 'Incentives', claim: '人会对激励做出反应，而且常常以设计者没有预料的方式反应。',
-        body: '价格、奖金、罚款、考核、点赞都是激励。古德哈特定律：当一个指标成为目标，它就不再是好指标。理解行为，先看激励结构，而不是先问人品。',
+        example: '自助餐吃到“回本”，是盯着“人均多少钱”；但真正决定要不要再拿一盘的，是“下一盘还值不值”。撑到难受，往往就是只算平均、不算边际。' },
+      { term: '激励反应', en: 'Incentives', claim: '人会对激励做出反应，而且常常以定规则的人没有预料的方式反应。',
+        body: '价格、奖金、罚款、考核、点赞都是激励。古德哈特定律说的就是：指标一旦变成目标，就会被钻空子——考核通话时长，客服就急着挂电话；考核销售额，销售就降价冲量。理解行为，先看激励结构：规则怎么奖励、怎么惩罚，而不是先问人品。',
         caution: '外在奖励可能挤出内在动机；惩罚过度会制造隐瞒，而不是合规。',
         link: '激励' }
     ]},
@@ -922,12 +963,12 @@ const DOMAINS = [
         link: '理性' },
       { term: '比较优势', en: 'Comparative Advantage', claim: '即使一方样样更强，按相对机会成本分工，双方仍能同时受益。',
         body: '绝对优势问“谁做得更好”，比较优势问“谁放弃得更少”。这是贸易、外包与团队分工的底层逻辑，也是个人分工的原则：你该做的，不一定是自己最擅长的事，而是放弃代价最小的事。',
-        caution: '比较优势假设要素可流动、调整成本可承受；现实中受损者往往集中，且声音更大。' },
+        caution: '比较优势算的是总账，不是每个人的账。它假设工人和资本能转到新行业、转型代价扛得住；现实中，收益摊在无数消费者身上，损失却集中在一个行业或一座城市。受损者更有动力组织起来，所以政策往往先听见他们。' },
       { term: '外部性与公共品', en: 'Externality & Public Goods', claim: '当成本或收益溢出到交易之外，价格就说谎了。',
-        body: '污染是负外部性，疫苗与教育是正外部性；灯塔与国防常被举为公共品（非排他、非竞争），但灯塔在历史上也有私人供给与收费。庇古主张征税或补贴，科斯主张界定产权并降低交易成本，奥斯特罗姆证明共同体可以自组织治理公地。',
+        body: '工厂排污，下游居民承担治病成本，这笔钱没进工厂的账，是负外部性；你打疫苗，周围人也更安全，是正外部性。灯塔和国防常被举为公共品：很难只让付钱的人使用，多一个人使用也不影响别人。怎么办？三条路：征税或补贴，把外部成本算进价格；界定产权，让受影响的人能谈、能赔；让使用牧场、渔场的人自己定规则、互相监督。庇古、科斯与奥斯特罗姆，分别代表了这三条路。',
         caution: '“市场失灵”不等于“政府一定成功”；监管也可能被俘获、信息不足、激励扭曲。' },
       { term: '信息不对称', en: 'Asymmetric Information', claim: '当一方知道得更多，市场会退化，甚至只剩下劣质品。',
-        body: '逆向选择发生在签约前（旧车市场、保险），道德风险发生在签约后（买了全险就不好好停车）。信号（文凭、质保、品牌）与筛选（体检、试用期）是对策。',
+        body: '一方知道得更多，市场就会退化。二手车市场：卖家知道车况，买家不知道，只肯出中间价；好车退出，剩下的多是坏车——这是签约前的逆向选择。买了全险，反正撞了有人赔，停车就没那么小心——这是签约后的道德风险。对策分两个方向：有信息的一方主动证明自己（文凭、质保、品牌），叫信号；没信息的一方设计门槛去筛（体检、试用期），叫筛选。',
         caution: '不要把“信息不对称”当作万能解释；先问：谁不知道什么，代价由谁承担。' }
     ]},
     { label: '演化', title: '制度、增长与不确定', summary: '把时间、规则与不确定性放回画面。', items: [
@@ -944,7 +985,7 @@ const DOMAINS = [
         caution: '用“印钱等于通胀”的单一公式解释一切，会忽略产能、需求与预期的时滞。',
         link: '理性' },
       { term: '博弈与均衡', en: 'Games & Equilibrium', claim: '当每个人的选择都取决于别人的选择，理性会走进策略的迷宫。',
-        body: '纳什均衡：给定他人策略，没有人愿意单方面改变。囚徒困境揭示个体理性与集体理性的裂缝；重复博弈、声誉与惩罚可以把合作变成均衡。',
+        body: '纳什均衡：给定他人策略，没有人愿意单方面改变。囚徒困境是最著名的例子：两个同伙被分开审讯，各自动机都是招供，结果都比沉默更糟；重复博弈、声誉与惩罚可以把合作变成均衡。',
         caution: '均衡不等于好结果；也不要假设对手和你一样理性。',
         link: '理性' }
     ]}
@@ -978,7 +1019,7 @@ const DOMAINS = [
       { term: '有效与可靠', en: 'Validity & Soundness', claim: '有效关心形式，可靠关心内容；逻辑只保证前者。',
         body: '有效：如果前提为真，结论不可能为假。可靠：有效，且前提确实为真。一个论证可以有效却荒谬：“所有猫会飞；这是猫；所以它会飞。”逻辑不负责事实，只负责传递。',
         caution: '结论为真不代表论证有效；结论为假也不代表论证无效。',
-        example: '“所有鸟会飞；企鹅是鸟；所以企鹅会飞”——形式有效，前提为假。' },
+        example: '“所有鸟会飞；企鹅是鸟；所以企鹅会飞”——推理形式没出错，错的是“所有鸟会飞”这个前提；所以它有效，但不可靠。' },
       { term: '演绎与常见错误', en: 'Deduction', claim: '四种基本推理形式，撑起了大部分严谨思考。',
         body: '肯定前件（P→Q，P，所以 Q）与否定后件（P→Q，非 Q，所以非 P）是有效的；否定前件与肯定后件是无效的。三段论还要防止“中项不周延”（中项没有覆盖应有的范围）与“四词谬误”（论证里悄悄多出一个概念）。',
         caution: '“如果努力就能成功”与“他成功了”，推不出“他努力”——这是肯定后件。',
@@ -989,15 +1030,15 @@ const DOMAINS = [
     ]},
     { label: '进阶', title: '归纳、概率与因果', summary: '从确定的形式，走向不确定的世界。', items: [
       { term: '归纳问题', en: 'Problem of Induction', claim: '过去重复一万次，也不能在演绎上保证下一次。',
-        body: '休谟指出：我们相信太阳明天会升起，靠的是习惯与心理预期，而不是逻辑必然。古德曼的“绿蓝”悖论进一步说明：归纳需要预设“自然类”，而自然类本身无法被归纳证明。',
+        body: '休谟指出：我们相信太阳明天会升起，靠的是习惯与心理预期，而不是逻辑必然。归纳还需要预设“自然类”，而自然类本身无法被归纳证明。',
         caution: '归纳不可靠，不等于它无用；它是我们唯一能用来学习的工具，只是需要被校准。' },
       { term: '概率与贝叶斯', en: 'Probability & Bayes', claim: '判断一个证据，必须同时看它在新旧假设下的出现概率。',
         body: '贝叶斯更新：后验 ∝ 先验 × 似然。医生看到阳性检测，不能直接说“你 95% 有病”，还要看基础发病率。忽略基础比率，是最普遍的统计错误。',
         caution: '先验不是偏见，而是必须显式写出的假设；没有先验，证据无法单独说话。',
-        example: '罕见病检测灵敏度 99%、假阳性率 1%，若患病率 0.1%，阳性者真正患病的概率仍只有约 9%。',
+        example: '1,000 人里约 1 人患病，检测呈阳性；剩下 999 人没病，也会有约 10 人假阳性。所以阳性者里真正有病的只有约 1/11，也就是 9%。',
         link: '因果' },
       { term: '因果推断', en: 'Causal Inference', claim: '相关不等于因果，识别因果需要反事实。',
-        body: '混杂、选择偏差与反向因果都会制造虚假相关。随机对照实验通过随机化切断混杂；自然实验、断点回归、双重差分则利用外部冲击。因果问题是“如果当时不这样，会怎样”。',
+        body: '混杂、选择偏差与反向因果都会制造虚假相关。比如冰淇淋卖得越多，溺水也越多——不是冰淇淋害人，而是天气热同时推高了两者。随机对照实验通过随机化切断混杂；自然实验、断点回归、双重差分则利用外部冲击。因果问题是“如果当时不这样，会怎样”。',
         caution: '回归系数不是因果效应；控制变量也不是越多越好——控制住共同结果，反而会制造虚假相关（对撞偏差）。',
         link: '因果' },
       { term: '统计素养', en: 'Statistical Literacy', claim: 'p 值不是“结论为真的概率”，显著性也不等于重要性。',
@@ -1048,10 +1089,10 @@ const DOMAINS = [
         body: '什么是知识、正义、自由、意识？苏格拉底式追问：给出定义，寻找反例，再修正定义。概念清晰之后，许多争论会自动消解，剩下的才是真问题。',
         caution: '概念分析不能替代经验研究；它只负责把问题问对。' },
       { term: '思想实验', en: 'Thought Experiments', claim: '在现实中无法隔离的变量，可以在想象中隔离。',
-        body: '电车难题测试后果与义务的冲突；缸中之脑测试知识与实在；中文房间测试理解与模拟；无知之幕测试公平。思想实验的价值在于：把直觉推到极端，看它是否仍然自洽。',
+        body: '电车难题：拉杆救五人、牺牲一人，你拉不拉？缸中之脑：大脑被泡在营养液里接上电极，你如何知道世界是真的？中文房间：不懂中文的人按规则对答如流，算不算懂？无知之幕：不知道自己会是谁时，你会选什么规则？四个实验分别逼问义务与后果、实在、理解与公平。思想实验的价值在于：把直觉推到极端，看它是否仍然自洽。',
         caution: '直觉可能是被文化塑造的；思想实验的结论需要论证支撑，而不是“我觉得”。' },
       { term: '知识与确证', en: 'Knowledge & Justification', claim: '知识不只是“相信了并且碰巧对了”。',
-        body: '传统定义是：知识等于确证的真信念。盖蒂尔反例显示，即使三者齐备，也可能只是运气。于是可靠性、无运气条件、德性知识论相继登场。怀疑论则不断追问：你的确证链条在哪里停止？',
+        body: '传统定义是：知识等于确证的真信念。但盖蒂尔反例显示，即使三者齐备，也可能只是运气——你看了一眼停走的钟，碰巧猜对时间，这算“知道”吗？于是可靠性、无运气条件、德性知识论相继登场。怀疑论则不断追问：你的确证链条在哪里停止？',
         caution: '“我相信”“这是真的”“我有理由”三者要分开检验。',
         link: '因果' },
       { term: '理性主义与经验主义', en: 'Rationalism & Empiricism', claim: '知识来自理性还是经验？康德说：两者都不可或缺。',
@@ -1062,7 +1103,7 @@ const DOMAINS = [
       { term: '本体论', en: 'Ontology', claim: '本体论不问“世界是什么样”，而问“什么东西才算真正存在”。',
         body: '物理对象、属性、关系、数字、心灵、制度——哪些是基本存在，哪些只是由它们派生出来的？唯物主义、唯心主义、二元论与自然主义，给出不同的存在清单。',
         caution: '不要把本体论当成文字游戏；你承认什么存在，决定了你能接受什么样的解释。',
-        example: '“钱存在吗？”作为纸钞它存在，作为社会约定它也成立——但这是两种不同的“存在”。',
+        example: '公司存在吗？你在街上找不到一个叫“公司”的东西，但它能签合同、发工资、被起诉——它以一种不同于桌椅的方式存在。',
         link: '心智' },
       { term: '自由意志与因果', en: 'Free Will & Causality', claim: '自由不是“没有原因”，而是“能按自己的意愿行动而不受强制”——这是相容论的回答。',
         body: '决定论主张一切事件都有原因；硬决定论否认自由，相容论则把自由定义为“能按自己的意愿行动，且意愿未被操纵”。休谟把因果还原为习惯性联想，至今未有定论。',
@@ -1129,7 +1170,7 @@ const DOMAINS = [
         body: '视觉依赖先验假设与上下文；错觉是预测系统的副产品。预测加工理论认为，心智不断生成预测，并用感觉输入修正误差。你看到的，是你预期看到的。',
         caution: '“感知是建构”不意味着“世界不存在”；它说明经验经过了加工。' },
       { term: '注意是瓶颈', en: 'Attention', claim: '注意力是稀缺资源，意识一次只能处理很少的信息。',
-        body: '无意视盲、变化盲、注意力瞬脱证明：看见不等于注意到。多任务处理本质是快速切换，切换有成本。注意力流向哪里，你的现实就由哪里构成。',
+        body: '无意视盲、变化盲、注意力瞬脱证明：看见不等于注意到。大猩猩实验就是无意视盲；有人换了衣服跟你说话，你可能没发现，这是变化盲。多任务处理本质是快速切换，切换有成本。注意力流向哪里，你的现实就由哪里构成。',
         caution: '把“我没看见”当作“它不存在”，是知觉层面的以偏概全。' },
       { term: '记忆是重建', en: 'Memory as Reconstruction', claim: '记忆不是录像回放，而是每次提取时的重新拼装。',
         body: '记忆受图式、情绪与事后信息影响；目击者证词、闪光灯记忆都可能被污染。提取练习能增强记忆，过度重读则制造“熟悉感”的错觉。',
@@ -1202,7 +1243,7 @@ const DOMAINS = [
   layers: [
     { label: '地基', title: '社会事实与互动', summary: '外在于个人，却塑造个人。', items: [
       { term: '社会事实', en: 'Social Facts', claim: '有些力量外在于个人，却对个人有约束力。',
-        body: '涂尔干用自杀率证明：即使最私人的行为，也受社会整合与规范调节。社会事实包括法律、道德、集体情感、人口结构。它们不能被还原为个体心理。',
+        body: '涂尔干用自杀率证明：即使最私人的行为，也受社会整合与规范调节。不同群体的自杀率长期稳定，单个人自杀的原因各不相同，但比率会随社会整合程度变化。社会事实包括法律、道德、集体情感、人口结构。它们不能被还原为个体心理。',
         caution: '社会事实不等于“社会决定论”；结构与能动性始终在互动。' },
       { term: '社会建构', en: 'Social Construction', claim: '很多我们视为“自然”的东西，是被互动与制度建构出来的。',
         body: '伯格与卢克曼描述制度化的过程：反复互动形成类型化，类型化被客观化，再通过社会化被内化。性别角色、种族分类、货币价值，甚至“童年”的概念，都有历史。',
@@ -2790,7 +2831,41 @@ function initAtlas(canvas, domains, bridges, callbacks) {
     raf = null;
   }
 
+  /* ---- 星空开关：记住偏好，关闭时停止动画 ---- */
+  const skySwitch = document.getElementById('sky-switch');
+  let skyEnabled = true;
+  try {
+    skyEnabled = window.localStorage.getItem('atlas-sky') !== 'off';
+  } catch (err) { /* 隐私模式下忽略存储异常 */ }
+
+  function setSkyEnabled(on, persist) {
+    skyEnabled = on;
+    canvas.classList.toggle('is-off', !on);
+    if (skySwitch) {
+      const label = on ? '关闭星空背景' : '开启星空背景';
+      skySwitch.setAttribute('aria-pressed', on ? 'true' : 'false');
+      skySwitch.setAttribute('aria-label', label);
+      skySwitch.setAttribute('title', label);
+    }
+    if (on) {
+      if (reduce) draw();
+      else start();
+    } else {
+      stop();
+      ripples.length = 0;
+      pointer.active = false;
+    }
+    if (persist) {
+      try {
+        window.localStorage.setItem('atlas-sky', on ? 'on' : 'off');
+      } catch (err) { /* 隐私模式下忽略存储异常 */ }
+    }
+  }
+
+  if (skySwitch) skySwitch.addEventListener('click', () => setSkyEnabled(!skyEnabled, true));
+
   const onPointerMove = (e) => {
+    if (!skyEnabled) return;
     pointer.tx = e.clientX;
     pointer.ty = e.clientY;
     if (!pointer.active) {
@@ -2802,6 +2877,7 @@ function initAtlas(canvas, domains, bridges, callbacks) {
     }
   };
   const onPointerDown = (e) => {
+    if (!skyEnabled) return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     pointer.tx = e.clientX;
     pointer.ty = e.clientY;
@@ -2825,22 +2901,22 @@ function initAtlas(canvas, domains, bridges, callbacks) {
     resizeTimer = setTimeout(() => {
       resizeCanvas();
       build();
-      draw();
+      if (skyEnabled) draw();
     }, 160);
   };
   const onVisibility = () => {
-    if (document.hidden) stop();
+    if (document.hidden || !skyEnabled) stop();
     else start();
   };
   const onReduceChange = (e) => {
     reduce = e.matches;
+    if (!skyEnabled) { stop(); return; }
     if (reduce) { stop(); draw(); } else { start(); }
   };
 
   resizeCanvas();
   build();
-  draw();
-  start();
+  setSkyEnabled(skyEnabled, false);
 
   window.addEventListener('pointermove', onPointerMove, { passive: true });
   window.addEventListener('pointerdown', onPointerDown, { passive: true });
